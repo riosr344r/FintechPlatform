@@ -1,0 +1,7 @@
+{
+  "name": "Fintech Platform for Faculty of Commerce",
+  "description": "A web platform for commerce students with course-specific hubs, Gemini-powered AI tutors, discussion forums, and resource management.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
