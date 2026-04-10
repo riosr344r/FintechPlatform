@@ -1,15 +1,28 @@
 
+import React from 'react';
 import type { Course } from './types';
 import { 
-    IconScale, 
-    IconPuzzle, 
-    IconCalculator, 
-    IconTrendingUp, 
-    IconServer, 
-    IconGlobe 
+  IconScale, 
+  IconPuzzle, 
+  IconCalculator, 
+  IconTrendingUp, 
+  IconServer, 
+  IconGlobe,
+  IconBook
 } from './components/icons';
 
+export const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
+  'IconScale': IconScale,
+  'IconPuzzle': IconPuzzle,
+  'IconCalculator': IconCalculator,
+  'IconTrendingUp': IconTrendingUp,
+  'IconServer': IconServer,
+  'IconGlobe': IconGlobe,
+  'IconBook': IconBook,
+};
+
 export const HOME_PAGE_ID = 'home';
+
 
 const GOV_ACCOUNTING_SOURCE = `
 دراسات في المحاسبة الحكومية والقومية
@@ -626,80 +639,195 @@ const GOV_ACCOUNTING_SOURCE = `
 
 export const COURSES: Course[] = [
   {
-    id: 'gov-accounting',
-    title: 'Government & Public Accounting',
-    titleAr: 'محاسبة حكومية وقومية',
-    description: 'Explore accounting principles in the public sector and national economy.',
-    systemPrompt: 'You are an expert AI tutor specializing in Government and Public Accounting. Explain concepts clearly, provide examples from public sector finance, and assist with problems related to national budget and accountability.',
+    id: 'hr-management',
+    title: 'Human Resources Management',
+    titleAr: 'إدارة الموارد البشرية',
+    description: 'Study the principles and practices of managing human resources in organizations.',
+    systemPrompt: 'You are an AI tutor for Human Resources Management. Assist with concepts like recruitment, training, performance evaluation, and employee relations.',
     resources: [
-      { id: 'ga1', type: 'pdf', title: 'مصادر مادة محاسبة حكومية وقومية', url: 'https://drive.google.com/file/d/1iWSv0oQVuSYb-enUAqhZncXhTZ2tDa2G/view?usp=sharing' },
-    ],
-    icon: IconScale,
-    color: 'from-sky-500 to-indigo-500',
-    knowledgeBase: GOV_ACCOUNTING_SOURCE,
-  },
-  {
-    id: 'contemp-accounting',
-    title: 'Contemporary Accounting Issues',
-    titleAr: 'مشاكل محاسبية معاصرة',
-    description: 'Discuss modern challenges and advancements in the accounting field.',
-    systemPrompt: 'You are an AI assistant focusing on Contemporary Accounting Issues. Your expertise includes IFRS updates, sustainability reporting (ESG), forensic accounting, and the impact of technology like blockchain on accounting. Provide insightful analysis and reference current standards.',
-    resources: [
-        { id: 'ca1', type: 'pdf', title: 'مصادر مادة مشاكل محاسبية معاصرة', url: 'https://drive.google.com/file/d/1MA84M7ebBnqZs1ioNzFfAGjNsaMgwPXr/view?usp=sharing' },
+      { id: 'hr1', type: 'pdf', title: 'مصادر مادة إدارة الموارد البشرية', url: 'https://drive.google.com/file/d/1CpCXxRIULIMmD71XLJcnHv4MLki7xTRM/view?usp=drive_link' }
     ],
     icon: IconPuzzle,
-    color: 'from-teal-400 to-cyan-500',
+    iconName: 'IconPuzzle',
+    color: 'from-pink-500 to-rose-600',
+    academicYear: 'third'
   },
   {
-    id: 'cost-accounting',
-    title: 'Cost Accounting',
-    titleAr: 'محاسبة تكاليف',
-    description: 'Master the techniques for tracking and analyzing business costs.',
-    systemPrompt: 'You are a specialized AI tutor for Cost Accounting. Help students with topics like job costing, process costing, activity-based costing (ABC), and variance analysis. Use practical examples from manufacturing and service industries.',
+    id: 'managerial-economics',
+    title: 'Managerial Economics',
+    titleAr: 'اقتصاد اداري',
+    description: 'Apply economic theories and concepts to business decision making.',
+    systemPrompt: 'You are an AI tutor for Managerial Economics. Help students understand demand analysis, cost theory, pricing strategies, and market structures.',
     resources: [
-        { id: 'coa1', type: 'pdf', title: 'مصادر مادة محاسبة تكاليف', url: 'https://drive.google.com/file/d/1H6ZbfgliRTtMckXfqOA5x5fJXda-k-vA/view?usp=sharing' },
-    ],
-    icon: IconCalculator,
-    color: 'from-amber-500 to-orange-600',
-  },
-  {
-    id: 'financial-management',
-    title: 'Financial Management & Financing',
-    titleAr: 'إدارة مالية وتمويل',
-    description: 'Learn about corporate finance, investment strategies, and funding sources.',
-    systemPrompt: 'You are an AI expert in Financial Management and Financing. Assist with concepts like capital budgeting, valuation, risk management, and corporate financing decisions. Explain financial models and theories with clarity.',
-    resources: [
-        { id: 'fm1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1rlaFJwnkCfj3wh0vDJG0rTgc-fDs9cFz/view?usp=sharing' },
-        { id: 'fm2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/1AyaWXSVveoTuHaqHmJZiuy76BYGJIZ1B/view?usp=sharing' },
-        { id: 'fm3', type: 'pdf', title: 'مصادر المادة - جزء 3', url: 'https://drive.google.com/file/d/1Xe5DdImvfcpcr9l_HaWXoMg5Hzdeh8Oo/view?usp=sharing' },
-        { id: 'fm4', type: 'pdf', title: 'مصادر المادة - جزء 4', url: 'https://drive.google.com/file/d/16W1AayCmzEqxbEnL8fBmmFbOG7ixTzlb/view?usp=sharing' },
+      { id: 'me1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1foE1VGMSvaVTEPikDs0lSHjO7GIbf9aN/view?usp=drive_link' },
+      { id: 'me2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/12JJYq7hh5x-6zeLhPsc_KkaBOsZ2HJff/view?usp=drive_link' }
     ],
     icon: IconTrendingUp,
-    color: 'from-lime-500 to-green-600',
+    iconName: 'IconTrendingUp',
+    color: 'from-emerald-500 to-teal-600',
+    academicYear: 'third'
   },
   {
-    id: 'accounting-is',
-    title: 'Accounting Information Systems',
-    titleAr: 'نظم معلومات محاسبية',
-    description: 'Understand the design and control of information systems for accounting.',
-    systemPrompt: 'You are an AI tutor for Accounting Information Systems (AIS). Your knowledge covers system design, internal controls, database management for accounting, and cybersecurity within financial systems. Explain flowcharts, database schemas, and control frameworks like COSO.',
+    id: 'project-accounting-evaluation',
+    title: 'Accounting Evaluation of Projects',
+    titleAr: 'تقييم محاسبي للمشروعات',
+    description: 'Learn how to evaluate and analyze projects from an accounting perspective.',
+    systemPrompt: 'You are an AI tutor for Accounting Evaluation of Projects. Assist with capital budgeting, feasibility studies, risk analysis, and project valuation techniques.',
     resources: [
-        { id: 'ais1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1W7Mm2wB-0S5ixsGmzLrkuwZ5o7F6RoIM/view?usp=sharing' },
-        { id: 'ais2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/15blx1wTiFMKM8zyYlmx5M8s_6JdWwBzl/view?usp=sharing' },
+      { id: 'pae1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1Rh9mr7gimj56JCDK0GKpQTfUCQCvZI5u/view?usp=drive_link' },
+      { id: 'pae2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/13_hpUghZe7blnDCmc7PcemVWzv68PLCV/view?usp=drive_link' },
+      { id: 'pae3', type: 'pdf', title: 'مصادر المادة - جزء 3', url: 'https://drive.google.com/file/d/1B3P-oPcr86NDp4akx2du3fgrOKPH592g/view?usp=drive_link' }
+    ],
+    icon: IconCalculator,
+    iconName: 'IconCalculator',
+    color: 'from-blue-500 to-indigo-600',
+    academicYear: 'third'
+  },
+  {
+    id: 'computer-software',
+    title: 'Computer Software',
+    titleAr: 'برمجيات حاسب',
+    description: 'Explore computer software applications and their uses in business and accounting.',
+    systemPrompt: 'You are an AI tutor for Computer Software. Help students understand software applications, databases, and programming concepts relevant to accounting and business.',
+    resources: [
+      { id: 'cs1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1QHKPB3gAKWoFr2vlBdOhAwEFofkMzZdX/view?usp=drive_link' },
+      { id: 'cs2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/19yNHOV7gHW9ifKShu8tVhGU12K5G1Yzf/view?usp=drive_link' },
+      { id: 'cs3', type: 'pdf', title: 'مصادر المادة - جزء 3', url: 'https://drive.google.com/file/d/1PPucYczgFECr1XUcdRtnnlBBjUAzn4yd/view?usp=drive_link' },
+      { id: 'cs4', type: 'pdf', title: 'مصادر المادة - جزء 4', url: 'https://drive.google.com/file/d/1AdKDVDgBTMUo5n9lCBbKSYl7RlsH43mC/view?usp=drive_link' },
+      { id: 'cs5', type: 'pdf', title: 'مصادر المادة - جزء 5', url: 'https://drive.google.com/file/d/12qt1dUVpKRSNrk0saKbZdxMcYayKJ4_c/view?usp=drive_link' },
+      { id: 'cs6', type: 'pdf', title: 'مصادر المادة - جزء 6', url: 'https://drive.google.com/file/d/1wbb2ZHfCSSrnNIM1weqTOkKqrdA2VPjk/view?usp=drive_link' },
+      { id: 'cs7', type: 'pdf', title: 'مصادر المادة - جزء 7', url: 'https://drive.google.com/file/d/1kspCJy3E0qEJoycnSdPnHP7kJQQMQDzG/view?usp=drive_link' },
+      { id: 'cs8', type: 'pdf', title: 'مصادر المادة - جزء 8', url: 'https://drive.google.com/file/d/1SUqbX01llItjSv10DyUsHZbQ7rsmonyi/view?usp=drive_link' },
+      { id: 'cs9', type: 'pdf', title: 'مصادر المادة - جزء 9', url: 'https://drive.google.com/file/d/1b75aodrp1hYu_hgyRCPNWZYLBMxmQyXL/view?usp=drive_link' },
+      { id: 'cs10', type: 'pdf', title: 'مصادر المادة - جزء 10', url: 'https://drive.google.com/file/d/1EtUmUGdZIpe30PGhMKzjpEoZ5Pb4BYHo/view?usp=drive_link' }
     ],
     icon: IconServer,
-    color: 'from-blue-500 to-violet-600',
+    iconName: 'IconServer',
+    color: 'from-violet-500 to-purple-600',
+    academicYear: 'third'
   },
   {
-    id: 'econ-dev',
-    title: 'Economic Development',
-    titleAr: 'تنمية إقتصادية',
-    description: 'Study the theories and policies of economic growth and development.',
-    systemPrompt: 'You are an AI assistant for Economic Development. Discuss theories from Smith, Keynes, and modern economists. Analyze development policies, global inequality, and the role of institutions in economic growth. Use real-world country examples.',
+    id: 'administrative-studies',
+    title: 'Administrative Studies',
+    titleAr: 'دراسات ادارية باللغة',
+    description: 'Study administrative concepts and practices in English.',
+    systemPrompt: 'You are an AI tutor for Administrative Studies. Help students understand administrative theories, practices, and terminology in English.',
     resources: [
-        { id: 'ed1', type: 'pdf', title: 'مصادر مادة تنمية إقتصادية', url: 'https://drive.google.com/file/d/1fdiKtl1CzOUdy6GLAL3biX7Ade_knSpN/view?usp=sharing' },
+      { id: 'as1', type: 'pdf', title: 'مصادر المادة', url: 'https://drive.google.com/file/d/1aUS1rz7D4WEeuFH9Ez1LutSpIF_oMAgK/view?usp=drive_link' }
     ],
     icon: IconGlobe,
-    color: 'from-rose-400 to-red-500',
+    iconName: 'IconGlobe',
+    color: 'from-amber-500 to-orange-600',
+    academicYear: 'third'
   },
+  {
+    id: 'specialized-accounting',
+    title: 'Specialized Accounting',
+    titleAr: 'محاسبة متخصصة',
+    description: 'Explore specialized accounting topics and their applications.',
+    systemPrompt: 'You are an AI tutor for Specialized Accounting. Help students understand accounting in specialized sectors and complex financial scenarios.',
+    resources: [
+      { id: 'sa1', type: 'pdf', title: 'مصادر المادة', url: 'https://drive.google.com/file/d/18JBl-vVzlIa0SB-LNfrGv0r1Ep-lVmL4/view?usp=drive_link' }
+    ],
+    icon: IconBook,
+    iconName: 'IconBook',
+    color: 'from-cyan-500 to-blue-600',
+    academicYear: 'third'
+  },
+  {
+    id: 'tax-accounting',
+    title: 'Tax Accounting',
+    titleAr: 'محاسبة ضريبية',
+    description: 'Study the principles and practices of tax accounting.',
+    systemPrompt: 'You are an AI tutor for Tax Accounting. Assist students with understanding tax laws, regulations, and the preparation of tax returns.',
+    resources: [
+      { id: 'ta1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1BCWngXK3mkIh9-RsY-lojUkePySiAs11/view?usp=sharing' },
+      { id: 'ta2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/1FZRdH4RTRH4RSYhuDdR0xse5IlzSdB2C/view?usp=sharing' }
+    ],
+    icon: IconCalculator,
+    iconName: 'IconCalculator',
+    color: 'from-red-500 to-rose-600',
+    academicYear: 'fourth'
+  },
+  {
+    id: 'financial-institutions-accounting',
+    title: 'Financial Institutions Accounting',
+    titleAr: 'محاسبة المنشات المالية',
+    description: 'Learn about accounting practices specific to financial institutions like banks and insurance companies.',
+    systemPrompt: 'You are an AI tutor for Financial Institutions Accounting. Help students understand the unique accounting treatments and financial reporting requirements for banks, insurance companies, and other financial entities.',
+    resources: [
+      { id: 'fia1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1xeLOh8KLrIORm_Jm9nn5FT34VoDBWRt7/view?usp=sharing' },
+      { id: 'fia2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/1DThuz3K458awa9lCq1REWnBWQ0MgKGev/view?usp=sharing' },
+      { id: 'fia3', type: 'pdf', title: 'مصادر المادة - جزء 3', url: 'https://drive.google.com/file/d/1xaFldfa9oGjMDVB84pGkJefHJVwHzaqH/view?usp=sharing' },
+      { id: 'fia4', type: 'pdf', title: 'مصادر المادة - جزء 4', url: 'https://drive.google.com/file/d/1tqDxGy_m9kc0hcYKwvIB1AieU1ygqpnj/view?usp=sharing' },
+      { id: 'fia5', type: 'pdf', title: 'مصادر المادة - جزء 5', url: 'https://drive.google.com/file/d/1_Ke86GKmzGGqyDkQx1Q_Fd7M1iDaR-dc/view?usp=sharing' },
+      { id: 'fia6', type: 'pdf', title: 'مصادر المادة - جزء 6', url: 'https://drive.google.com/file/d/1cnn1zc9zAH6JXO4XQwtgv9C6Wurl6biG/view?usp=sharing' }
+    ],
+    icon: IconTrendingUp,
+    iconName: 'IconTrendingUp',
+    color: 'from-blue-500 to-indigo-600',
+    academicYear: 'fourth'
+  },
+  {
+    id: 'managerial-accounting',
+    title: 'Managerial Accounting',
+    titleAr: 'محاسبة ادارية',
+    description: 'Focus on providing information within the company so that management can operate the company more effectively.',
+    systemPrompt: 'You are an AI tutor for Managerial Accounting. Assist students with topics like cost behavior, budgeting, performance evaluation, and decision-making analysis.',
+    resources: [
+      { id: 'ma1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1fgahnbPu_9VVGCKXCZny8qDNy54JZNXZ/view?usp=sharing' },
+      { id: 'ma2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/1TVjVhRw6RvtsYQZxlejQrpajdoemiLMP/view?usp=sharing' },
+      { id: 'ma3', type: 'pdf', title: 'مصادر المادة - جزء 3', url: 'https://drive.google.com/file/d/1NWBC178cFLvyWbVicbsSkokW35odszto/view?usp=sharing' },
+      { id: 'ma4', type: 'pdf', title: 'مصادر المادة - جزء 4', url: 'https://drive.google.com/file/d/1Cl8ymgdxWB4_MRJlpo0fg9QenDByLgmE/view?usp=sharing' }
+    ],
+    icon: IconPuzzle,
+    iconName: 'IconPuzzle',
+    color: 'from-emerald-500 to-teal-600',
+    academicYear: 'fourth'
+  },
+  {
+    id: 'accounting-applications',
+    title: 'Accounting Applications',
+    titleAr: 'تطبيقات محاسبية',
+    description: 'Practical application of accounting principles using software and real-world scenarios.',
+    systemPrompt: 'You are an AI tutor for Accounting Applications. Help students understand how to apply accounting concepts using software tools and solve practical accounting problems.',
+    resources: [
+      { id: 'aa1', type: 'pdf', title: 'مصادر المادة - جزء 1', url: 'https://drive.google.com/file/d/1Ysk9aJDGi04x_2hsc85RScHoCfEzbEFg/view?usp=sharing' },
+      { id: 'aa2', type: 'pdf', title: 'مصادر المادة - جزء 2', url: 'https://drive.google.com/file/d/1pwDgkkqnr21XWfpO_tYNM8kJtwY305dL/view?usp=sharing' },
+      { id: 'aa3', type: 'pdf', title: 'مصادر المادة - جزء 3', url: 'https://drive.google.com/file/d/1SvEYfFh4DwYwUk5FS1V-Yd1ULmt7_LeS/view?usp=sharing' },
+      { id: 'aa4', type: 'pdf', title: 'مصادر المادة - جزء 4', url: 'https://drive.google.com/file/d/19g7yYM-DtZq5DOVee_zvYVMPHYAxro3v/view?usp=sharing' }
+    ],
+    icon: IconServer,
+    iconName: 'IconServer',
+    color: 'from-purple-500 to-fuchsia-600',
+    academicYear: 'fourth'
+  },
+  {
+    id: 'auditing-2',
+    title: 'Auditing 2',
+    titleAr: 'مراجعة 2',
+    description: 'Advanced study of auditing principles, procedures, and standards.',
+    systemPrompt: 'You are an AI tutor for Auditing 2. Assist students with advanced auditing concepts, internal controls, audit evidence, and reporting.',
+    resources: [
+      { id: 'aud1', type: 'pdf', title: 'مصادر المادة', url: 'https://drive.google.com/file/d/1_OAacKkkVdeog0FH2BRkIHFtjD934yv2/view?usp=sharing' }
+    ],
+    icon: IconScale,
+    iconName: 'IconScale',
+    color: 'from-amber-500 to-orange-600',
+    academicYear: 'fourth'
+  },
+  {
+    id: 'operations-research',
+    title: 'Operations Research',
+    titleAr: 'بحوث عمليات',
+    description: 'Application of advanced analytical methods to help make better decisions.',
+    systemPrompt: 'You are an AI tutor for Operations Research. Help students understand mathematical modeling, linear programming, and optimization techniques used in decision making.',
+    resources: [
+      { id: 'or1', type: 'pdf', title: 'مصادر المادة', url: 'https://drive.google.com/file/d/10wdo4-TODwIoT3H09roKpiE8dzov0H-W/view?usp=sharing' }
+    ],
+    icon: IconGlobe,
+    iconName: 'IconGlobe',
+    color: 'from-cyan-500 to-sky-600',
+    academicYear: 'fourth'
+  }
 ];

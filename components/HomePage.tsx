@@ -1,16 +1,19 @@
 
 import React from 'react';
-import { COURSES } from '../constants';
+import { ICON_MAP } from '../constants';
 import { IconBook } from './icons';
+import type { Course } from '../types';
 
 interface HomePageProps {
     onSelectCourse: (id: string) => void;
     userName?: string;
+    courses: Course[];
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ 
     onSelectCourse, 
     userName, 
+    courses
 }) => {
   return (
     <div className="p-4 md:p-8 h-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300 overflow-y-auto">
@@ -20,13 +23,19 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-3xl p-8 md:p-12 shadow-2xl text-white relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full transform translate-x-1/3 -translate-y-1/2 blur-3xl group-hover:opacity-10 transition-opacity duration-700"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-900 opacity-20 rounded-full transform -translate-x-1/3 translate-y-1/3 blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
-            <div className="relative z-10">
-                <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight leading-tight">
-                    مرحباً بك مجدداً، {userName || 'يا بطل'}! 👋
-                </h1>
-                <p className="text-primary-100 text-lg md:text-xl max-w-2xl font-medium leading-relaxed">
-                    جاهز تكمل رحلتك التعليمية النهاردة؟ تصفح موادك وابدأ المذاكرة مع مساعدك الذكي "بكار".
-                </p>
+            <div className="relative z-10 flex items-center justify-between">
+                <div>
+                    <h1 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
+                        <div className="mb-2">مرحباً بك</div>
+                        <div>مجدداً، {userName || 'يا بطل'}!</div>
+                    </h1>
+                    <p className="text-primary-100 text-lg md:text-xl max-w-2xl font-medium leading-relaxed mt-6">
+                        جاهز تكمل رحلتك التعليمية النهاردة؟ تصفح موادك وابدأ المذاكرة مع مساعدك الذكي "بكار".
+                    </p>
+                </div>
+                <div className="hidden md:block text-8xl animate-wave origin-bottom-right">
+                    👋
+                </div>
             </div>
         </div>
       </div>
@@ -41,8 +50,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <span>موادك الدراسية</span>
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {COURSES.map(course => {
-                        const CourseIcon = course.icon;
+                    {courses.map(course => {
+                        const CourseIcon = (course as any).iconName ? ICON_MAP[(course as any).iconName] || IconBook : (course.icon || IconBook);
                         return (
                         <div
                             key={course.id}

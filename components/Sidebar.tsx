@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import type { Course, User } from '../types';
-import { HOME_PAGE_ID } from '../constants';
-import { IconHome, IconMenu, IconClose, IconChevronLeft, IconChevronRight, IconLogout, IconPencil, IconSettings } from './icons';
+import { HOME_PAGE_ID, ICON_MAP } from '../constants';
+import { IconHome, IconMenu, IconClose, IconChevronLeft, IconChevronRight, IconLogout, IconPencil, IconSettings, IconBook } from './icons';
 import { EditProfileModal } from './EditProfileModal';
 
 interface SidebarProps {
@@ -54,12 +54,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isExpanded={isExpanded}
         />
         <div className="pt-4">
-          <h2 className={`px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider transition-all duration-300 ${!isExpanded ? 'hidden' : 'block'}`}>
+          <h2 className={`px-2 text-xs font-semibold text-gray-400 uppercase transition-all duration-300 ${!isExpanded ? 'hidden' : 'block'}`}>
             المواد الدراسية
           </h2>
           <div className={`mt-2 space-y-1 ${!isExpanded ? 'flex flex-col items-center' : ''}`}>
             {courses.map((course) => {
-              const CourseIcon = course.icon;
+              const CourseIcon = (course as any).iconName ? ICON_MAP[(course as any).iconName] || IconBook : (course.icon || IconBook);
               return (
                 <NavItem
                   key={course.id}
@@ -106,8 +106,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={onOpenSettings}
                 className={`group relative flex items-center text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-all ${isExpanded ? 'w-full px-3 py-2' : 'justify-center p-2 rounded-xl'}`}
             >
+                {isExpanded && <span className="me-3 whitespace-nowrap flex-1 text-right">الإعدادات</span>}
                 <IconSettings className="h-5 w-5 flex-shrink-0" />
-                {isExpanded && <span className="ms-3 whitespace-nowrap">الإعدادات</span>}
                 {!isExpanded && (
                   <div className="absolute right-full mr-3 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none shadow-lg">
                     الإعدادات
@@ -196,15 +196,14 @@ const NavItem: React.FC<NavItemProps> = ({ label, icon, isSelected, onClick, isE
           : 'text-gray-400 hover:bg-gray-700 hover:text-white'
       }`}
     >
-      <div className={`flex-shrink-0 transition-colors duration-200 ${isSelected ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>
-        {icon}
-      </div>
-      
       {isExpanded && (
-          <span className="ms-3 whitespace-nowrap overflow-hidden text-ellipsis">
+          <span className="me-3 whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-right">
               {label}
           </span>
       )}
+      <div className={`flex-shrink-0 transition-colors duration-200 ${isSelected ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>
+        {icon}
+      </div>
 
       {!isExpanded && (
         <div className="absolute right-full mr-3 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none shadow-lg">

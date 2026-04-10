@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { CourseHub } from './components/CourseHub';
 import { HomePage } from './components/HomePage';
@@ -7,6 +7,13 @@ import { LoginPage } from './components/LoginPage';
 import { SettingsModal } from './components/SettingsModal';
 import { COURSES, HOME_PAGE_ID } from './constants';
 import type { Course, User, Theme, FontSize, AccentColor } from './types';
+import { auth, onAuthStateChanged, signOut } from './firebase';
+import { 
+  syncUserProfile, 
+  getUserProfile, 
+  subscribeToCourses, 
+  seedCourses 
+} from './services/firebaseService';
 
 // Color Palettes (RGB values)
 const COLOR_PALETTES: Record<AccentColor, Record<number, string>> = {
@@ -20,6 +27,9 @@ const COLOR_PALETTES: Record<AccentColor, Record<number, string>> = {
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [incompleteUser, setIncompleteUser] = useState<User | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string>(HOME_PAGE_ID);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -34,6 +44,47 @@ const App: React.FC = () => {
   const [accentColor, setAccentColor] = useState<AccentColor>(() => {
     return (localStorage.getItem('accentColor') as AccentColor) || 'indigo';
   });
+
+  // Firebase Auth Listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const profile = await getUserProfile(firebaseUser.uid);
+        if (profile && profile.academicYear) {
+          setUser(profile);
+          setIncompleteUser(null);
+        } else {
+          setIncompleteUser({
+            id: firebaseUser.uid,
+            name: profile?.name || firebaseUser.displayName || '',
+            picture: profile?.picture || firebaseUser.photoURL || `https://avatar.iran.liara.run/public?username=${firebaseUser.uid}`,
+          });
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+        setIncompleteUser(null);
+      }
+      setIsAuthReady(true);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Firestore Courses Listener & Seeding
+  useEffect(() => {
+    if (!isAuthReady || !user || !user.academicYear) return;
+
+    // Sync courses to Firestore to ensure updates are applied
+    // This will fail silently for non-admins due to our catch block in seedCourses
+    seedCourses(COURSES).catch(e => console.warn("Could not seed courses (likely not admin):", e));
+
+    const unsubscribe = subscribeToCourses(user.academicYear, (fetchedCourses) => {
+      setCourses(fetchedCourses);
+    });
+
+    return () => unsubscribe();
+  }, [isAuthReady, user]);
 
   // Apply Theme Effect
   useEffect(() => {
@@ -74,44 +125,43 @@ const App: React.FC = () => {
     }
   };
 
-
-  useEffect(() => {
-    // Check for a logged-in user in local storage on initial load
-    const storedUser = localStorage.getItem('fintechUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const handleLogin = (name: string, picture: string | null) => {
-    if (!name.trim()) return;
+  const handleLogin = async (name: string, picture: string | null, academicYear: 'third' | 'fourth') => {
+    if (!auth.currentUser) return;
     
-    const mockUser: User = {
-      id: Date.now().toString(),
+    const updatedUser: User = {
+      id: auth.currentUser.uid,
       name: name,
-      picture: picture || `https://i.pravatar.cc/150?u=${encodeURIComponent(name)}`,
+      picture: picture || auth.currentUser.photoURL || `https://avatar.iran.liara.run/public?username=${encodeURIComponent(name)}`,
+      academicYear
     };
-    localStorage.setItem('fintechUser', JSON.stringify(mockUser));
-    setUser(mockUser);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('fintechUser');
-    setUser(null);
-    setSelectedCourseId(HOME_PAGE_ID); // Reset to home page on logout
-  };
-
-  const handleUpdateUser = (updatedUser: User) => {
     setUser(updatedUser);
-    localStorage.setItem('fintechUser', JSON.stringify(updatedUser));
+    setIncompleteUser(null);
+    await syncUserProfile(updatedUser);
   };
 
+  const handleLogout = async () => {
+    await signOut(auth);
+    setSelectedCourseId(HOME_PAGE_ID);
+  };
 
-  if (!user) {
-    return <LoginPage onLogin={handleLogin} />;
+  const handleUpdateUser = async (updatedUser: User) => {
+    setUser(updatedUser);
+    await syncUserProfile(updatedUser);
+  };
+
+  if (!isAuthReady) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+      </div>
+    );
   }
 
-  const selectedCourse = COURSES.find(c => c.id === selectedCourseId) as Course | undefined;
+  if (!user) {
+    return <LoginPage onLogin={handleLogin} incompleteUser={incompleteUser} />;
+  }
+
+  const selectedCourse = courses.find(c => c.id === selectedCourseId) as Course | undefined;
 
   return (
     <div className={`flex h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-all duration-300 ${getFontSizeClass()}`}>
@@ -119,7 +169,7 @@ const App: React.FC = () => {
         user={user}
         onLogout={handleLogout}
         onUpdateUser={handleUpdateUser}
-        courses={COURSES}
+        courses={courses}
         selectedCourseId={selectedCourseId}
         setSelectedCourseId={setSelectedCourseId}
         isExpanded={isSidebarExpanded}
@@ -134,6 +184,7 @@ const App: React.FC = () => {
             <HomePage 
               onSelectCourse={setSelectedCourseId} 
               userName={user.name} 
+              courses={courses}
             />
           )}
         </div>
@@ -154,6 +205,8 @@ const App: React.FC = () => {
         setFontSize={setFontSize}
         accentColor={accentColor}
         setAccentColor={setAccentColor}
+        user={user}
+        onUpdateUser={handleUpdateUser}
       />
     </div>
   );

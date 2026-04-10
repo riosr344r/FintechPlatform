@@ -84,7 +84,11 @@ export const AudioTranscriber: React.FC = () => {
         setIsLoading(false);
         
         scriptProcessorRef.current?.disconnect();
-        audioContextRef.current?.close();
+        try {
+            if (audioContextRef.current?.state !== 'closed') {
+                audioContextRef.current?.close();
+            }
+        } catch (e) { console.warn(e); }
 
         sessionPromiseRef.current?.then(session => session.close());
         sessionPromiseRef.current = null;

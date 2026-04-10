@@ -26,7 +26,11 @@ export const useAudioPlayer = () => {
             }
         }
         return () => {
-           audioContextRef.current?.close();
+           try {
+               if (audioContextRef.current?.state !== 'closed') {
+                   audioContextRef.current?.close();
+               }
+           } catch (e) { console.warn(e); }
         }
     }, []);
 

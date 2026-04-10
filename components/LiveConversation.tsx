@@ -192,8 +192,16 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
         setIsLoading(false);
         
         scriptProcessorRef.current?.disconnect();
-        inputAudioContextRef.current?.close();
-        outputAudioContextRef.current?.close();
+        try {
+            if (inputAudioContextRef.current?.state !== 'closed') {
+                inputAudioContextRef.current?.close();
+            }
+        } catch (e) { console.warn(e); }
+        try {
+            if (outputAudioContextRef.current?.state !== 'closed') {
+                outputAudioContextRef.current?.close();
+            }
+        } catch (e) { console.warn(e); }
 
         sessionPromiseRef.current?.then(session => session.close());
         sessionPromiseRef.current = null;

@@ -6,6 +6,7 @@ import { ImageAnalyzer } from './ImageAnalyzer';
 import { AudioTranscriber } from './AudioTranscriber';
 import { LiveConversation } from './LiveConversation';
 import { Notebook } from './Notebook';
+import { deleteCourse } from '../services/firebaseService';
 
 interface CourseHubProps {
   course: Course;
@@ -38,9 +39,22 @@ export const CourseHub: React.FC<CourseHubProps> = ({ course, userName }) => {
 
   return (
     <div className="flex flex-col h-full p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      <header className="mb-4 md:mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{course.title}</h1>
-        <h2 className="text-lg text-gray-600 dark:text-gray-400">{course.titleAr}</h2>
+      <header className="mb-4 md:mb-6 pb-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{course.title}</h1>
+            <h2 className="text-lg text-gray-600 dark:text-gray-400">{course.titleAr}</h2>
+        </div>
+        <button 
+            onClick={async () => {
+                if (confirm('هل أنت متأكد من حذف هذه المادة؟')) {
+                    await deleteCourse(course.id);
+                    window.location.reload();
+                }
+            }}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+            حذف المادة
+        </button>
       </header>
 
       <div className="flex-shrink-0 mb-4">

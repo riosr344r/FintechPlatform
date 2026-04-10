@@ -64,7 +64,7 @@ export const SourcePanel: React.FC<SourcePanelProps> = ({ sources, onAddSource, 
                     <div className="flex-1 min-w-0 pt-0.5">
                       <div className="flex items-center justify-between mb-1">
                          <h4 className="text-sm font-semibold text-gray-200 truncate pr-2" title={source.title}>{source.title}</h4>
-                         <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">{source.type}</span>
+                         <span className="text-[10px] uppercase font-bold text-gray-500 bg-gray-800 px-1.5 py-0.5 rounded border border-gray-700">{source.type}</span>
                       </div>
                       <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed opacity-80" title={source.content}>{source.content}</p>
                     </div>

@@ -1,7 +1,7 @@
 
 import React from 'react';
-import type { Theme, FontSize, AccentColor } from '../types';
-import { IconClose, IconSun, IconMoon, IconTextSize, IconSparkles } from './icons';
+import type { Theme, FontSize, AccentColor, User } from '../types';
+import { IconClose, IconSun, IconMoon, IconTextSize, IconSparkles, IconBook } from './icons';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -12,6 +12,8 @@ interface SettingsModalProps {
   setFontSize: (size: FontSize) => void;
   accentColor: AccentColor;
   setAccentColor: (color: AccentColor) => void;
+  user: User;
+  onUpdateUser: (user: User) => void;
 }
 
 const ACCENT_COLORS: { value: AccentColor; label: string; class: string }[] = [
@@ -31,7 +33,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   fontSize, 
   setFontSize,
   accentColor,
-  setAccentColor
+  setAccentColor,
+  user,
+  onUpdateUser
 }) => {
   if (!isOpen) return null;
 
@@ -56,7 +60,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="space-y-8">
           {/* Theme Section */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
               <IconSun className="w-4 h-4" />
               <span>المظهر</span>
             </h3>
@@ -88,7 +92,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Accent Color Section */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
               <IconSparkles className="w-4 h-4" />
               <span>لون التطبيق</span>
             </h3>
@@ -114,7 +118,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* Font Size Section */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
               <IconTextSize className="w-4 h-4" />
               <span>حجم الخط</span>
             </h3>
@@ -148,6 +152,35 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }`}
               >
                 كبير
+              </button>
+            </div>
+          </div>
+          {/* Academic Year Section */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
+              <IconBook className="w-4 h-4" />
+              <span>الفرقة الدراسية</span>
+            </h3>
+            <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-xl">
+              <button
+                onClick={() => onUpdateUser({ ...user, academicYear: 'third' })}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  user.academicYear === 'third'
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                الفرقة الثالثة
+              </button>
+              <button
+                onClick={() => onUpdateUser({ ...user, academicYear: 'fourth' })}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  user.academicYear === 'fourth'
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                الفرقة الرابعة
               </button>
             </div>
           </div>

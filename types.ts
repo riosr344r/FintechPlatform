@@ -14,8 +14,10 @@ export interface Course {
   resources: Resource[];
   color: string; // e.g., 'from-indigo-500 to-purple-600'
   icon: React.FC<{ className?: string }>;
+  iconName?: string; // String reference for the icon
   progress?: number; // 0-100 Mock progress for dashboard
   knowledgeBase?: string; // Context/Source material for the AI
+  academicYear: 'third' | 'fourth';
 }
 
 export interface Resource {
@@ -36,6 +38,7 @@ export interface User {
   id: string;
   name: string;
   picture: string;
+  academicYear?: 'third' | 'fourth';
 }
 
 export interface Source {

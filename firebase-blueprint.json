@@ -1,0 +1,96 @@
+
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "picture": { "type": "string" },
+        "email": { "type": "string" },
+        "academicYear": { "type": "string", "enum": ["third", "fourth"] }
+      },
+      "required": ["id", "name", "picture"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Course material and AI tutor configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "titleAr": { "type": "string" },
+        "description": { "type": "string" },
+        "systemPrompt": { "type": "string" },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "type": "string", "enum": ["pdf", "link", "video"] },
+              "title": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        },
+        "color": { "type": "string" },
+        "knowledgeBase": { "type": "string" },
+        "academicYear": { "type": "string", "enum": ["third", "fourth"] }
+      },
+      "required": ["id", "title", "titleAr", "description", "systemPrompt", "resources", "color", "academicYear"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User notifications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["info", "success", "warning", "alert"] },
+        "timestamp": { "type": "number" },
+        "read": { "type": "boolean" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "title", "message", "type", "timestamp", "read", "userId"]
+    },
+    "StudyTask": {
+      "title": "StudyTask",
+      "description": "User study tasks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "courseId": { "type": "string" },
+        "courseName": { "type": "string" },
+        "dueDate": { "type": "number" },
+        "type": { "type": "string", "enum": ["study", "assignment", "review"] },
+        "completed": { "type": "boolean" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "title", "courseId", "courseName", "dueDate", "type", "completed", "priority", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Course materials"
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User notifications"
+    },
+    "/users/{userId}/studyTasks/{taskId}": {
+      "schema": "StudyTask",
+      "description": "User study tasks"
+    }
+  }
+}

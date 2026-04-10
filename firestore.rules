@@ -1,0 +1,153 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (matches auth.uid)
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - picture: string (required)
+    //   - email: string (optional)
+    //   - academicYear: string (optional, enum: third, fourth)
+    //
+    // Collection: courses
+    // Document ID: courseId
+    // Fields:
+    //   - id: string (required)
+    //   - title: string (required)
+    //   - titleAr: string (required)
+    //   - description: string (required)
+    //   - systemPrompt: string (required)
+    //   - resources: list (required)
+    //   - color: string (required)
+    //   - knowledgeBase: string (optional)
+    //   - academicYear: string (required, enum: third, fourth)
+    //
+    // Collection: users/{userId}/notifications
+    // Document ID: notificationId
+    // Fields:
+    //   - id: string (required)
+    //   - title: string (required)
+    //   - message: string (required)
+    //   - type: string (required, enum: info, success, warning, alert)
+    //   - timestamp: number (required)
+    //   - read: bool (required)
+    //   - userId: string (required)
+    //
+    // Collection: users/{userId}/studyTasks
+    // Document ID: taskId
+    // Fields:
+    //   - id: string (required)
+    //   - title: string (required)
+    //   - courseId: string (required)
+    //   - courseName: string (required)
+    //   - dueDate: number (required)
+    //   - type: string (required, enum: study, assignment, review)
+    //   - completed: bool (required)
+    //   - priority: string (required, enum: high, medium, low)
+    //   - userId: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          request.auth.token.email == "llgh95847@gmail.com");
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'name', 'picture']) &&
+             data.id is string && data.id.size() > 0 &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.picture is string && data.picture.size() > 0 &&
+             (!('academicYear' in data) || data.academicYear in ['third', 'fourth']);
+    }
+
+    function isValidCourse(data) {
+      return data.keys().hasAll(['id', 'title', 'titleAr', 'description', 'systemPrompt', 'resources', 'color', 'academicYear']) &&
+             data.id is string && data.id.size() > 0 &&
+             data.title is string && data.title.size() > 0 &&
+             data.titleAr is string && data.titleAr.size() > 0 &&
+             data.description is string && data.description.size() > 0 &&
+             data.systemPrompt is string && data.systemPrompt.size() > 0 &&
+             data.resources is list &&
+             data.color is string &&
+             data.academicYear in ['third', 'fourth'];
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['id', 'title', 'message', 'type', 'timestamp', 'read', 'userId']) &&
+             data.id is string &&
+             data.title is string && data.title.size() > 0 &&
+             data.message is string && data.message.size() > 0 &&
+             data.type in ['info', 'success', 'warning', 'alert'] &&
+             data.timestamp is number &&
+             data.read is bool &&
+             data.userId == request.auth.uid;
+    }
+
+    function isValidStudyTask(data) {
+      return data.keys().hasAll(['id', 'title', 'courseId', 'courseName', 'dueDate', 'type', 'completed', 'priority', 'userId']) &&
+             data.id is string &&
+             data.title is string && data.title.size() > 0 &&
+             data.courseId is string &&
+             data.courseName is string &&
+             data.dueDate is number &&
+             data.type in ['study', 'assignment', 'review'] &&
+             data.completed is bool &&
+             data.priority in ['high', 'medium', 'low'] &&
+             data.userId == request.auth.uid;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && 
+                      (
+                        (!('role' in request.resource.data) && !('role' in resource.data)) ||
+                        (request.resource.data.get('role', '') == resource.data.get('role', '')) || 
+                        isAdmin()
+                      );
+      
+      match /notifications/{notificationId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /studyTasks/{taskId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /courses/{courseId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
