@@ -14,16 +14,17 @@ interface LiveConversationProps {
     userName: string;
     courseName: string;
     knowledgeBase?: string;
+    defaultVoice?: 'male' | 'female';
 }
 
 type VoiceGender = 'male' | 'female';
 
-export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, courseName, knowledgeBase }) => {
+export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, courseName, knowledgeBase, defaultVoice = 'male' }) => {
     const [isLive, setIsLive] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [transcripts, setTranscripts] = useState<Transcript[]>([]);
-    const [selectedVoice, setSelectedVoice] = useState<VoiceGender>('male');
+    const [selectedVoice, setSelectedVoice] = useState<VoiceGender>(defaultVoice);
 
     const sessionPromiseRef = useRef<Promise<any> | null>(null);
     const inputAudioContextRef = useRef<AudioContext | null>(null);
@@ -44,7 +45,7 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+            const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
             // FIX: Cast window to any to support webkitAudioContext for older browsers.
             outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
             nextStartTimeRef.current = 0;
@@ -53,7 +54,7 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
             // Puck: Male
             // Kore: Female
             const voiceName = selectedVoice === 'male' ? 'Puck' : 'Kore';
-            const assistantName = selectedVoice === 'male' ? 'بكار' : 'سارة';
+            const assistantName = selectedVoice === 'male' ? 'بكار' : 'هنية';
             
             // Addressing logic: Bakkar talks to males, Sara talks to females (based on user request)
             const addressInstruction = selectedVoice === 'male' 
@@ -92,7 +93,7 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
             `;
 
             sessionPromiseRef.current = ai.live.connect({
-                model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+                model: 'gemini-3.1-flash-live-preview',
                 config: {
                     responseModalities: [Modality.AUDIO],
                     inputAudioTranscription: {},
@@ -111,7 +112,7 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
                         // Send a silent text trigger to force the model to speak the greeting defined in system instruction
                         sessionPromiseRef.current?.then(session => {
                             session.sendRealtimeInput({
-                                content: [{ role: 'user', parts: [{ text: "Hello, start the conversation now." }] }]
+                                text: "Hello, start the conversation now."
                             });
                         });
                     },
@@ -151,9 +152,14 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
                             currentOutputTranscription = '';
                         }
                     },
-                    onerror: (e: ErrorEvent) => {
+                    onerror: (e: any) => {
                         console.error('Live error:', e);
-                        setError('حصل خطأ أثناء المحادثة.');
+                        const msg = e?.message || String(e);
+                        if (msg.includes('exhausted') || msg.includes('quota') || msg.includes('429')) {
+                            setError('عذراً، تم استنفاد الحد المسموح به للاستخدام حالياً (Quota). يرجى المحاولة لاحقاً.');
+                        } else {
+                            setError('حصل خطأ أثناء المحادثة.');
+                        }
                         stopConversation();
                     },
                     onclose: (e: CloseEvent) => {
@@ -171,16 +177,21 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
                 const inputData = event.inputBuffer.getChannelData(0);
                 const pcmBlob = createBlob(inputData);
                 sessionPromiseRef.current?.then((session) => {
-                    session.sendRealtimeInput({ media: pcmBlob });
+                    session.sendRealtimeInput({ audio: pcmBlob });
                 });
             };
             
             source.connect(scriptProcessorRef.current);
             scriptProcessorRef.current.connect(inputAudioContextRef.current.destination);
 
-        } catch (err) {
+        } catch (err: any) {
             console.error('Failed to start conversation:', err);
-            setError('مشكلة في الوصول للمايكروفون. اتأكد من السماحيات.');
+            const msg = err?.message || String(err);
+            if (msg.includes('exhausted') || msg.includes('quota') || msg.includes('429')) {
+                setError('عذراً، تم استنفاد الحد المسموح به للاستخدام حالياً (Quota). يرجى المحاولة لاحقاً.');
+            } else {
+                setError('مشكلة في بدء المحادثة أو الوصول للمايكروفون.');
+            }
             setIsLoading(false);
         }
     };
@@ -235,7 +246,7 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
                             : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'
                         } disabled:opacity-50`}
                     >
-                        صوت بنت (سارة)
+                        صوت بنت (هنية)
                     </button>
                  </div>
 
@@ -254,7 +265,7 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">نص المحادثة</h3>
                     <span className="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded">
-                        {selectedVoice === 'male' ? 'لهجة مصرية (بكار)' : 'لهجة مصرية (سارة)'}
+                        {selectedVoice === 'male' ? 'لهجة مصرية (بكار)' : 'لهجة مصرية (هنية)'}
                     </span>
                 </div>
                 
@@ -271,8 +282,8 @@ export const LiveConversation: React.FC<LiveConversationProps> = ({ userName, co
                             {t.speaker === 'model' && (
                                 <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center overflow-hidden bg-gray-100 border border-gray-200`}>
                                      <img 
-                                        src={selectedVoice === 'male' ? "https://avatar.iran.liara.run/public/boy?username=Bakkar" : "https://avatar.iran.liara.run/public/girl?username=Sara"} 
-                                        alt={selectedVoice === 'male' ? "Bakkar" : "Sara"}
+                                        src={selectedVoice === 'male' ? "https://j.top4top.io/p_37593ndpq1.png" : "https://h.top4top.io/p_3759u2ov61.png"} 
+                                        alt={selectedVoice === 'male' ? "بكار" : "هنية"}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>

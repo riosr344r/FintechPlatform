@@ -1,7 +1,7 @@
 
 import React from 'react';
-import type { Theme, FontSize, AccentColor, User } from '../types';
-import { IconClose, IconSun, IconMoon, IconTextSize, IconSparkles, IconBook } from './icons';
+import type { Theme, FontSize, AccentColor, User, BotPersonality } from '../types';
+import { IconClose, IconSun, IconMoon, IconTextSize, IconSparkles, IconBook, IconUser } from './icons';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -14,6 +14,8 @@ interface SettingsModalProps {
   setAccentColor: (color: AccentColor) => void;
   user: User;
   onUpdateUser: (user: User) => void;
+  botPersonality: BotPersonality;
+  setBotPersonality: (p: BotPersonality) => void;
 }
 
 const ACCENT_COLORS: { value: AccentColor; label: string; class: string }[] = [
@@ -35,12 +37,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   accentColor,
   setAccentColor,
   user,
-  onUpdateUser
+  onUpdateUser,
+  botPersonality,
+  setBotPersonality
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto pt-20">
       <style>{`
         @keyframes zoomIn {
           from { opacity: 0; transform: scale(0.9); }
@@ -50,7 +54,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           animation: zoomIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
       `}</style>
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl p-6 w-full max-w-md relative zoom-in-modal transition-colors duration-300">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl p-6 w-full max-w-md relative zoom-in-modal transition-colors duration-300 my-auto">
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
           <IconClose className="w-6 h-6" />
         </button>
@@ -58,6 +62,38 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">إعدادات المنصة</h2>
 
         <div className="space-y-8">
+          {/* Bot Personality Section */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">
+              <IconUser className="w-4 h-4" />
+              <span>شخصية وصوت المساعد</span>
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setBotPersonality('bakkar')}
+                className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
+                  botPersonality === 'bakkar' 
+                    ? 'border-primary-600 bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300' 
+                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary-300'
+                }`}
+              >
+                <img src="https://j.top4top.io/p_37593ndpq1.png" alt="بكار" className="w-12 h-12 rounded-full object-cover" />
+                <span className="font-bold">بكار</span>
+              </button>
+              <button
+                onClick={() => setBotPersonality('hania')}
+                className={`flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all duration-200 ${
+                  botPersonality === 'hania' 
+                    ? 'border-rose-500 bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300' 
+                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-rose-300'
+                }`}
+              >
+                <img src="https://h.top4top.io/p_3759u2ov61.png" alt="هنية" className="w-12 h-12 rounded-full object-cover" />
+                <span className="font-bold">هنية</span>
+              </button>
+            </div>
+          </div>
+
           {/* Theme Section */}
           <div>
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-4 flex items-center gap-2">

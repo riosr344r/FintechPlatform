@@ -6,7 +6,7 @@ import { HomePage } from './components/HomePage';
 import { LoginPage } from './components/LoginPage';
 import { SettingsModal } from './components/SettingsModal';
 import { COURSES, HOME_PAGE_ID } from './constants';
-import type { Course, User, Theme, FontSize, AccentColor } from './types';
+import type { Course, User, Theme, FontSize, AccentColor, BotPersonality } from './types';
 import { auth, onAuthStateChanged, signOut } from './firebase';
 import { 
   syncUserProfile, 
@@ -33,6 +33,7 @@ const App: React.FC = () => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>(HOME_PAGE_ID);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isBotSelectionOpen, setIsBotSelectionOpen] = useState(false);
 
   // Persistence State
   const [theme, setTheme] = useState<Theme>(() => {
@@ -44,6 +45,22 @@ const App: React.FC = () => {
   const [accentColor, setAccentColor] = useState<AccentColor>(() => {
     return (localStorage.getItem('accentColor') as AccentColor) || 'indigo';
   });
+  const [botPersonality, setBotPersonality] = useState<BotPersonality | null>(() => {
+    return (localStorage.getItem('botPersonality') as BotPersonality) || null;
+  });
+
+  // Check for personality
+  useEffect(() => {
+    if (user && !botPersonality) {
+        setIsBotSelectionOpen(true);
+    }
+  }, [user, botPersonality]);
+
+  const handleSelectPersonality = (personality: BotPersonality) => {
+      setBotPersonality(personality);
+      localStorage.setItem('botPersonality', personality);
+      setIsBotSelectionOpen(false);
+  };
 
   // Firebase Auth Listener
   useEffect(() => {
@@ -164,7 +181,7 @@ const App: React.FC = () => {
   const selectedCourse = courses.find(c => c.id === selectedCourseId) as Course | undefined;
 
   return (
-    <div className={`flex h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-all duration-300 ${getFontSizeClass()}`}>
+    <div className={`flex h-screen bg-[#f3f4f6] dark:bg-[#0b1021] text-gray-900 dark:text-gray-100 font-sans transition-all duration-300 ${getFontSizeClass()}`}>
       <Sidebar
         user={user}
         onLogout={handleLogout}
@@ -176,10 +193,15 @@ const App: React.FC = () => {
         setIsExpanded={setIsSidebarExpanded}
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
-      <main className="flex-1 overflow-y-auto transition-all duration-300 flex flex-col">
-        <div className="flex-1">
+      <main className="flex-1 overflow-y-auto transition-all duration-300 flex flex-col relative z-0">
+        
+        {/* Dashboard Ambient Lights */}
+        <div className="absolute top-0 right-0 w-full h-[500px] bg-primary-500/10 dark:bg-primary-500/5 pointer-events-none -z-10 blur-[120px]"></div>
+        <div className="absolute top-0 left-0 w-1/2 h-[500px] bg-indigo-500/10 dark:bg-indigo-500/5 pointer-events-none -z-10 blur-[120px]"></div>
+
+        <div className="flex-1 z-10 flex flex-col">
           {selectedCourse ? (
-            <CourseHub key={selectedCourse.id} course={selectedCourse} userName={user.name} />
+            <CourseHub key={selectedCourse.id} course={selectedCourse} userName={user.name} botPersonality={botPersonality || 'bakkar'} />
           ) : (
             <HomePage 
               onSelectCourse={setSelectedCourseId} 
@@ -189,11 +211,13 @@ const App: React.FC = () => {
           )}
         </div>
         
-        <footer className="py-6 px-4 text-center border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-            تم التطوير بواسطة <span className="text-primary-600 dark:text-primary-400 font-bold">Dev Lido</span>
-          </p>
-        </footer>
+        {!selectedCourse && (
+          <footer className="py-6 px-4 text-center border-t border-gray-200/50 dark:border-[#1a233a] bg-transparent backdrop-blur-sm z-10">
+            <p className="text-sm text-gray-500 dark:text-[#64748b] font-medium">
+              تم التطوير بواسطة <span className="text-primary-600 dark:text-primary-400 font-bold drop-shadow-sm">Dev Lido</span>
+            </p>
+          </footer>
+        )}
       </main>
 
       <SettingsModal 
@@ -207,7 +231,38 @@ const App: React.FC = () => {
         setAccentColor={setAccentColor}
         user={user}
         onUpdateUser={handleUpdateUser}
+        botPersonality={botPersonality || 'bakkar'}
+        setBotPersonality={handleSelectPersonality}
       />
+
+      {/* Bot Selection Modal */}
+      {isBotSelectionOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-4">
+            <div className="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-2xl max-w-lg w-full text-center border border-gray-100 dark:border-gray-800">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">اختر شخصية المساعد الذكي</h2>
+                <p className="text-gray-500 dark:text-gray-400 mb-8">اختر الشخصية والصوت المفضل لك لتبدأ رحلتك التعليمية</p>
+                
+                <div className="grid grid-cols-2 gap-4">
+                    <button 
+                        onClick={() => handleSelectPersonality('bakkar')}
+                        className="flex flex-col items-center p-6 border-2 border-gray-100 dark:border-gray-800 rounded-2xl hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all group"
+                    >
+                        <img src="https://j.top4top.io/p_37593ndpq1.png" alt="بكار" className="w-24 h-24 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md object-cover" />
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">بكار</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">أسلوب عملي ومرح</p>
+                    </button>
+                    <button 
+                        onClick={() => handleSelectPersonality('hania')}
+                        className="flex flex-col items-center p-6 border-2 border-gray-100 dark:border-gray-800 rounded-2xl hover:border-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all group"
+                    >
+                        <img src="https://h.top4top.io/p_3759u2ov61.png" alt="هنية" className="w-24 h-24 rounded-full mb-4 group-hover:scale-110 transition-transform shadow-md object-cover" />
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">هنية</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">أسلوب هادئ ومفصل</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

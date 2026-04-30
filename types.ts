@@ -4,6 +4,7 @@ import React from 'react';
 export type Theme = 'light' | 'dark';
 export type FontSize = 'small' | 'medium' | 'large';
 export type AccentColor = 'indigo' | 'blue' | 'purple' | 'emerald' | 'rose' | 'amber';
+export type BotPersonality = 'bakkar' | 'hania';
 
 export interface Course {
   id: string;
@@ -15,6 +16,7 @@ export interface Course {
   color: string; // e.g., 'from-indigo-500 to-purple-600'
   icon: React.FC<{ className?: string }>;
   iconName?: string; // String reference for the icon
+  emojiIcon?: string; // 3D emoji icon
   progress?: number; // 0-100 Mock progress for dashboard
   knowledgeBase?: string; // Context/Source material for the AI
   academicYear: 'third' | 'fourth';

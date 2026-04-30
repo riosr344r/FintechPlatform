@@ -100,15 +100,14 @@ export const getCourses = async () => {
 export const seedCourses = async (courses: Course[]) => {
   const path = 'courses';
   try {
-    for (const course of courses) {
-      // We need to handle the icon property which is a React component
-      // Firestore doesn't store components, so we'll store the ID/Name and map it back
+    const promises = courses.map(course => {
       const { icon, ...courseData } = course;
-      await setDoc(doc(db, 'courses', course.id), {
+      return setDoc(doc(db, 'courses', course.id), {
         ...courseData,
         iconName: course.iconName || 'IconBook'
       }, { merge: true });
-    }
+    });
+    await Promise.all(promises);
   } catch (error: any) {
     if (error?.code === 'permission-denied' || (error instanceof Error && error.message.includes('Missing or insufficient permissions'))) {
       console.warn("Skipping course seeding: User does not have admin permissions.");

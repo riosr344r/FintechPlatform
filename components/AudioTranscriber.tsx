@@ -63,7 +63,7 @@ export const AudioTranscriber: React.FC = () => {
                 const inputData = audioProcessingEvent.inputBuffer.getChannelData(0);
                 const pcmBlob = createBlob(inputData);
                 sessionPromiseRef.current?.then((session) => {
-                    session.sendRealtimeInput({ media: pcmBlob });
+                    session.sendRealtimeInput({ audio: pcmBlob });
                 });
             };
             

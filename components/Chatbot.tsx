@@ -4,6 +4,8 @@ import type { ChatMessage } from '../types';
 import { generateChatResponse, generateSpeech, ChatMode, Verbosity } from '../services/geminiService';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { IconUser, IconSparkles, IconBolt, IconBrain, IconSend, IconSound, IconLoader, IconShortText, IconLongText, IconScale } from './icons';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatbotProps {
   courseSystemPrompt: string;
@@ -46,7 +48,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ courseSystemPrompt, userName, 
           `;
       }
 
-      const fullSystemPrompt = `${courseSystemPrompt}\n\n${knowledgeInstruction}\n\nUser name is: ${userName}. Your name is "Bakkar" (بكار). You are a smart, friendly, and enthusiastic AI tutor for commerce students. You speak in a helpful, encouraging tone, sometimes using Egyptian colloquialisms if appropriate to sound natural like the character Bakkar, but keep the academic content accurate and professional. Address the user by name occasionally.\n\nDEVELOPER INFO: The developer of this platform is "Lido" (المطور ليدو). If anyone asks who developed, created, or built the platform, or who is the developer, or asks "مين المطور؟" always say that the developer is Lido (المطور ليدو) and nothing else regarding attribution.\n\nIMPORTANT: Do not use Markdown formatting (like **bold** or *italic*). Do not use asterisks (*) in your response. Output plain text only.`;
+      const fullSystemPrompt = `${courseSystemPrompt}\n\n${knowledgeInstruction}\n\nUser name is: ${userName}. Your name is "Bakkar" (بكار). You are a smart, friendly, and enthusiastic AI tutor for commerce students. You speak in a helpful, encouraging tone, sometimes using Egyptian colloquialisms if appropriate to sound natural like the character Bakkar, but keep the academic content accurate and professional. Address the user by name occasionally.\n\nDEVELOPER INFO: The developer of this platform is "Lido" (المطور ليدو). If anyone asks who developed, created, or built the platform, or who is the developer, or asks "مين المطور؟" always say that the developer is Lido (المطور ليدو) and nothing else regarding attribution.\n\nIMPORTANT: Use Markdown formatting to organize your response to be readable.`;
       
       const responseText = await generateChatResponse(input, messages, fullSystemPrompt, chatMode, verbosity);
       const modelMessage: ChatMessage = { id: (Date.now() + 1).toString(), role: 'model', text: responseText };
@@ -92,25 +94,6 @@ export const Chatbot: React.FC<ChatbotProps> = ({ courseSystemPrompt, userName, 
                     <p className="text-xs text-primary-600 dark:text-primary-400 font-medium">مساعدك الشخصي في المادة</p>
                  </div>
              </div>
-        
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-                {/* Model Mode Group */}
-                <div className="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-1 flex items-center">
-                    <ModeToggle label="عادي" icon={<IconSparkles className="h-3.5 w-3.5" />} mode="standard" currentMode={chatMode} setMode={setChatMode} />
-                    <ModeToggle label="سريع" icon={<IconBolt className="h-3.5 w-3.5" />} mode="fast" currentMode={chatMode} setMode={setChatMode} />
-                    <ModeToggle label="تفكير" icon={<IconBrain className="h-3.5 w-3.5" />} mode="thinking" currentMode={chatMode} setMode={setChatMode} />
-                </div>
-
-                {/* Divider */}
-                <div className="w-px h-8 bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
-
-                {/* Verbosity Group */}
-                <div className="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-1 flex items-center">
-                    <VerbosityToggle value="concise" label="مختصر" icon={<IconShortText className="h-3.5 w-3.5" />} current={verbosity} set={setVerbosity} />
-                    <VerbosityToggle value="balanced" label="متوازن" icon={<IconScale className="h-3.5 w-3.5" />} current={verbosity} set={setVerbosity} />
-                    <VerbosityToggle value="detailed" label="مفصل" icon={<IconLongText className="h-3.5 w-3.5" />} current={verbosity} set={setVerbosity} />
-                </div>
-            </div>
         </div>
       </div>
 
@@ -128,9 +111,11 @@ export const Chatbot: React.FC<ChatbotProps> = ({ courseSystemPrompt, userName, 
             )}
             
             <div className={`max-w-md p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-primary-600 text-white rounded-tr-none' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-600'}`}>
-              <p className="text-sm leading-relaxed" style={{ whiteSpace: 'pre-wrap' }}>
-                {msg.text.replace(/\*/g, '')}
-              </p>
+              <div className="markdown-body prose dark:prose-invert max-w-none text-sm leading-relaxed" dir="auto">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {msg.text}
+                </ReactMarkdown>
+              </div>
               {msg.role === 'model' && msg.id !== 'init' && (
                 <div className="mt-2 flex items-center justify-end border-t border-gray-100 dark:border-gray-600 pt-2 gap-2">
                     <button 
@@ -169,7 +154,22 @@ export const Chatbot: React.FC<ChatbotProps> = ({ courseSystemPrompt, userName, 
         )}
         <div ref={chatEndRef} />
       </div>
-      <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+      <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-3">
+        <div className="flex flex-nowrap items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            {/* Model Mode Group */}
+            <div className="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-1 flex items-center shrink-0">
+                <ModeToggle label="عادي" icon={<IconSparkles className="h-3.5 w-3.5" />} mode="standard" currentMode={chatMode} setMode={setChatMode} />
+                <ModeToggle label="سريع" icon={<IconBolt className="h-3.5 w-3.5" />} mode="fast" currentMode={chatMode} setMode={setChatMode} />
+                <ModeToggle label="تفكير" icon={<IconBrain className="h-3.5 w-3.5" />} mode="thinking" currentMode={chatMode} setMode={setChatMode} />
+            </div>
+
+            {/* Verbosity Group */}
+            <div className="bg-gray-100 dark:bg-gray-700/50 rounded-xl p-1 flex items-center shrink-0">
+                <VerbosityToggle value="concise" label="مختصر" icon={<IconShortText className="h-3.5 w-3.5" />} current={verbosity} set={setVerbosity} />
+                <VerbosityToggle value="balanced" label="متوازن" icon={<IconScale className="h-3.5 w-3.5" />} current={verbosity} set={setVerbosity} />
+                <VerbosityToggle value="detailed" label="مفصل" icon={<IconLongText className="h-3.5 w-3.5" />} current={verbosity} set={setVerbosity} />
+            </div>
+        </div>
         <form onSubmit={handleSendMessage} className="flex items-center gap-3 relative">
           <input
             type="text"
@@ -205,9 +205,10 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ label, icon, mode, currentMode,
             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-gray-600/50'
         }`} 
         title={label}
+        type="button"
     >
         {icon}
-        <span className="hidden sm:inline">{label}</span>
+        <span>{label}</span>
     </button>
 );
 
@@ -228,8 +229,9 @@ const VerbosityToggle: React.FC<VerbosityToggleProps> = ({ label, icon, value, c
             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-gray-600/50'
         }`} 
         title={label}
+        type="button"
     >
         {icon}
-        <span className="hidden sm:inline">{label}</span>
+        <span>{label}</span>
     </button>
 );

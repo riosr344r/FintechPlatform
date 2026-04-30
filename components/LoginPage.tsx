@@ -56,55 +56,64 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, incompleteUser })
 
   if (incompleteUser) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center p-4 font-sans" dir="rtl">
-        <div className="max-w-md w-full">
+      <div className="min-h-screen bg-[#f3f4f6] dark:bg-[#0b1021] flex flex-col justify-center items-center p-4 font-sans relative overflow-hidden transition-colors duration-300" dir="rtl">
+        {/* Ambient background glows */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div className="max-w-md w-full relative z-10">
           <div className="text-center mb-10">
-            <div className="bg-primary-500/20 p-4 rounded-full inline-block mb-4">
-              <IconBook className="w-12 h-12 text-primary-400" />
+            <div className="inline-block mb-6 relative">
+              <div className="absolute inset-0 bg-primary-500/20 blur-xl rounded-full"></div>
+              <img 
+                src="https://i.top4top.io/p_3759frad11.png" 
+                alt="Fintech Logo" 
+                className="w-20 h-20 object-contain drop-shadow-2xl relative z-10 animate-[bounce_3s_infinite]"
+              />
             </div>
-            <h2 className="text-3xl font-bold text-white">استكمال البيانات</h2>
-            <p className="text-gray-400 mt-2">أدخل اسمك باللغة العربية واختر الفرقة الدراسية</p>
+            <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-wide">استكمال البيانات</h2>
+            <p className="text-gray-500 dark:text-[#64748b] mt-2 font-medium">أدخل اسمك باللغة العربية واختر الفرقة الدراسية</p>
           </div>
 
-          <div className="bg-gray-800 border border-gray-700 shadow-2xl rounded-2xl p-8">
+          <div className="bg-white/80 dark:bg-[#131b2f]/80 backdrop-blur-xl border border-gray-200 dark:border-[#1e293b] shadow-2xl rounded-[2rem] p-8">
             <form onSubmit={handleSubmitDetails} className="space-y-6">
               <div>
-                <label className="block text-right text-gray-300 mb-2">الاسم باللغة العربية</label>
+                <label className="block text-right text-gray-700 dark:text-gray-300 mb-2 font-semibold">الاسم باللغة العربية</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 text-white py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-right"
+                  className="w-full bg-gray-50 dark:bg-[#0b1021] border border-gray-200 dark:border-[#1e293b] text-gray-900 dark:text-white py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-right transition-all shadow-inner"
                   placeholder="مثال: أحمد محمد"
                 />
               </div>
               <div>
-                <label className="block text-right text-gray-300 mb-2">الفرقة الدراسية</label>
+                <label className="block text-right text-gray-700 dark:text-gray-300 mb-2 font-semibold">الفرقة الدراسية</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     type="button"
                     onClick={() => setAcademicYear('third')}
-                    className={`py-3 px-4 rounded-lg border transition-all ${academicYear === 'third' ? 'bg-primary-600 border-primary-500 text-white' : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'}`}
+                    className={`py-3 px-4 rounded-xl border transition-all font-bold shadow-sm ${academicYear === 'third' ? 'bg-primary-600 border-primary-500 text-white' : 'bg-white dark:bg-[#0b1021] border-gray-200 dark:border-[#1e293b] text-gray-500 dark:text-[#94a3b8] hover:bg-gray-50 dark:hover:bg-[#1a233a] hover:text-gray-900 dark:hover:text-white'}`}
                   >
                     الفرقة الثالثة
                   </button>
                   <button
                     type="button"
                     onClick={() => setAcademicYear('fourth')}
-                    className={`py-3 px-4 rounded-lg border transition-all ${academicYear === 'fourth' ? 'bg-primary-600 border-primary-500 text-white' : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'}`}
+                    className={`py-3 px-4 rounded-xl border transition-all font-bold shadow-sm ${academicYear === 'fourth' ? 'bg-primary-600 border-primary-500 text-white' : 'bg-white dark:bg-[#0b1021] border-gray-200 dark:border-[#1e293b] text-gray-500 dark:text-[#94a3b8] hover:bg-gray-50 dark:hover:bg-[#1a233a] hover:text-gray-900 dark:hover:text-white'}`}
                   >
-                    الفرقة الرابعة
+                     الفرقة الرابعة
                   </button>
                 </div>
               </div>
               
-              {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+              {error && <p className="text-rose-600 dark:text-rose-400 text-sm text-center font-bold bg-rose-500/10 py-2 rounded-lg">{error}</p>}
               
               <button
                 type="submit"
-                className="w-full bg-primary-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-500 transition-all"
+                className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white font-bold py-3.5 px-6 rounded-xl hover:from-primary-500 hover:to-indigo-500 transition-all shadow-lg hover:shadow-primary-500/25 active:scale-[0.98]"
               >
-                تسجيل الدخول إلى المنصة
+                الدخول إلى المنصة
               </button>
             </form>
           </div>
@@ -114,31 +123,40 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, incompleteUser })
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center p-4 font-sans" dir="rtl">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-[#f3f4f6] dark:bg-[#0b1021] flex flex-col justify-center items-center p-4 font-sans relative overflow-hidden transition-colors duration-300" dir="rtl">
+        {/* Ambient background glows */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+      <div className="max-w-md w-full relative z-10">
         <div className="text-center mb-10">
-          <div className="bg-primary-500/20 p-4 rounded-full inline-block mb-4">
-            <IconBook className="w-12 h-12 text-primary-400" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            منصة <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-indigo-400">التجارة</span>
+            <div className="inline-block mb-6 relative">
+              <div className="absolute inset-0 bg-primary-500/20 blur-xl rounded-full"></div>
+              <img 
+                src="https://i.top4top.io/p_3759frad11.png" 
+                alt="Fintech Logo" 
+                className="w-24 h-24 object-contain drop-shadow-2xl relative z-10 animate-[bounce_3s_infinite]"
+              />
+            </div>
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-wide">
+            منصة <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-indigo-400">فينتك</span>
           </h1>
-          <p className="text-gray-400 text-lg">مرحباً بك في منصة التعلم الذكي لطلاب كلية التجارة.</p>
+          <p className="text-gray-500 dark:text-[#64748b] text-lg font-medium">مرحباً بك في منصة التعلم الذكي لطلاب كلية التجارة.</p>
         </div>
 
-        <div className="bg-gray-800 border border-gray-700 shadow-2xl shadow-primary-500/10 rounded-2xl p-8 md:p-12">
+        <div className="bg-white/80 dark:bg-[#131b2f]/80 backdrop-blur-xl border border-gray-200 dark:border-[#1e293b] shadow-2xl rounded-[2rem] p-8 md:p-12">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white text-center mb-2">تسجيل الدخول</h2>
-            <p className="text-gray-400 text-center text-sm">استخدم حساب جوجل الخاص بك للدخول</p>
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white text-center mb-2 tracking-wide">تسجيل الدخول</h2>
+            <p className="text-gray-500 dark:text-[#94a3b8] text-center text-sm font-medium">استخدم حساب جوجل الخاص بك للدخول</p>
           </div>
 
           <button
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-3 bg-gray-50 hover:bg-gray-100 dark:bg-white text-gray-900 font-bold py-3.5 px-6 rounded-xl border border-gray-200 dark:border-transparent transition-all shadow-md dark:shadow-none dark:hover:bg-gray-100 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
           >
             {isLoading ? (
-              <div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <>
                 <svg className="w-6 h-6" viewBox="0 0 24 24">

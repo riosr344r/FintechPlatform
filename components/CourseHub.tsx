@@ -1,115 +1,67 @@
 
 import React, { useState } from 'react';
-import type { Course, Resource } from '../types';
-import { Chatbot } from './Chatbot';
-import { ImageAnalyzer } from './ImageAnalyzer';
-import { AudioTranscriber } from './AudioTranscriber';
+import type { Course, BotPersonality } from '../types';
+import { UnifiedChat } from './UnifiedChat';
 import { LiveConversation } from './LiveConversation';
-import { Notebook } from './Notebook';
-import { deleteCourse } from '../services/firebaseService';
+import { MessageSquare, PhoneCall } from 'lucide-react';
 
 interface CourseHubProps {
   course: Course;
   userName: string;
+  botPersonality: BotPersonality;
 }
 
-type Tab = 'chatbot' | 'resources' | 'image-analyzer' | 'audio-transcriber' | 'live-chat' | 'notebook';
-
-export const CourseHub: React.FC<CourseHubProps> = ({ course, userName }) => {
-  const [activeTab, setActiveTab] = useState<Tab>('notebook');
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'notebook':
-        return <Notebook courseId={course.id} userName={userName} />;
-      case 'chatbot':
-        return <Chatbot courseSystemPrompt={course.systemPrompt} userName={userName} knowledgeBase={course.knowledgeBase} />;
-      case 'resources':
-        return <CourseResources resources={course.resources} />;
-      case 'image-analyzer':
-        return <ImageAnalyzer />;
-      case 'audio-transcriber':
-        return <AudioTranscriber />;
-      case 'live-chat':
-        return <LiveConversation userName={userName} courseName={course.titleAr} knowledgeBase={course.knowledgeBase} />;
-      default:
-        return null;
-    }
-  };
+export const CourseHub: React.FC<CourseHubProps> = ({ course, userName, botPersonality }) => {
+  const [activeTab, setActiveTab] = useState<'chat' | 'call'>('chat');
 
   return (
-    <div className="flex flex-col h-full p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      <header className="mb-4 md:mb-6 pb-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{course.title}</h1>
-            <h2 className="text-lg text-gray-600 dark:text-gray-400">{course.titleAr}</h2>
+    <div className="flex bg-transparent text-gray-900 dark:text-gray-100 transition-colors duration-300 relative flex-1 h-full">
+      {/* Primary Interface (AI Assistant) */}
+      <div className="flex-grow flex flex-col w-full h-full">
+        {/* Navigation Tabs */}
+        <div className="flex justify-center border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-[#131b2f]/50 backdrop-blur-md">
+           <div className="flex p-2 gap-2">
+               <button
+                  onClick={() => setActiveTab('chat')}
+                  className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'chat' ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+               >
+                  <MessageSquare size={16} />
+                  المحادثة الكتابية
+               </button>
+               <button
+                  onClick={() => setActiveTab('call')}
+                  className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'call' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+               >
+                  <PhoneCall size={16} />
+                  المحادثة الصوتية
+               </button>
+           </div>
         </div>
-        <button 
-            onClick={async () => {
-                if (confirm('هل أنت متأكد من حذف هذه المادة؟')) {
-                    await deleteCourse(course.id);
-                    window.location.reload();
-                }
-            }}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-        >
-            حذف المادة
-        </button>
-      </header>
 
-      <div className="flex-shrink-0 mb-4">
-        <nav className="flex space-x-2 md:space-x-4 border-b border-gray-200 dark:border-gray-700 overflow-x-auto pb-2">
-            <TabButton name="دفتر الملاحظات" tab="notebook" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabButton name="بكار الذكي" tab="chatbot" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabButton name="المصادر" tab="resources" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabButton name="تحليل الصور" tab="image-analyzer" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabButton name="تحويل الصوت لنص" tab="audio-transcriber" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabButton name="محادثة صوتية" tab="live-chat" activeTab={activeTab} setActiveTab={setActiveTab} />
-        </nav>
-      </div>
-
-      <div className="flex-grow overflow-y-auto min-h-0">
-        {renderContent()}
+        {/* Workspace Content */}
+        <div className="flex-grow flex flex-col bg-white dark:bg-[#131b2f] border-l border-gray-200 dark:border-[#1e293b] shadow-xl overflow-hidden relative backdrop-blur-xl">
+           {/* Inner glow inside container */}
+           <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-[80px] mix-blend-screen pointer-events-none"></div>
+           <div className="absolute inset-0 z-10 flex flex-col pt-4">
+               {activeTab === 'chat' ? (
+                   <UnifiedChat courseSystemPrompt={course.systemPrompt} userName={userName} knowledgeBase={course.knowledgeBase} botPersonality={botPersonality} courseTitle={course.titleAr} />
+               ) : (
+                   <div className="flex-grow overflow-y-auto px-4 pb-12 flex justify-center items-start pt-6">
+                       <div className="w-full max-w-4xl">
+                           <LiveConversation 
+                               userName={userName} 
+                               courseName={course.titleAr} 
+                               knowledgeBase={course.knowledgeBase} 
+                               defaultVoice={botPersonality === 'bakkar' ? 'male' : 'female'}
+                           />
+                       </div>
+                   </div>
+               )}
+           </div>
+        </div>
       </div>
     </div>
   );
 };
 
-interface TabButtonProps {
-    name: string;
-    tab: Tab;
-    activeTab: Tab;
-    setActiveTab: (tab: Tab) => void;
-}
 
-const TabButton: React.FC<TabButtonProps> = ({ name, tab, activeTab, setActiveTab }) => (
-    <button
-        onClick={() => setActiveTab(tab)}
-        className={`px-3 py-2 font-medium text-sm rounded-t-lg transition-colors duration-200 focus:outline-none whitespace-nowrap ${
-            activeTab === tab 
-            ? 'border-b-2 border-primary-500 text-primary-600 dark:text-white' 
-            : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
-        }`}
-    >
-        {name}
-    </button>
-);
-
-const CourseResources: React.FC<{ resources: Resource[] }> = ({ resources }) => (
-    <div className="space-y-4 max-w-4xl mx-auto">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">مصادر المادة</h3>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-            {resources.map(res => (
-                <li key={res.id} className="py-3 flex items-center justify-between">
-                    <div>
-                        <p className="font-medium text-gray-800 dark:text-white">{res.title}</p>
-                        <span className="text-xs text-gray-500 dark:text-gray-500 uppercase">{res.type}</span>
-                    </div>
-                    <a href={res.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1 text-sm bg-primary-600 hover:bg-primary-500 rounded-md text-white transition-colors">
-                        افتح
-                    </a>
-                </li>
-            ))}
-        </ul>
-    </div>
-);

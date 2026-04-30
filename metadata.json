@@ -1,5 +1,5 @@
 {
-  "name": "Fintech Platform for Faculty of Commerce",
+  "name": "منصة فينتك",
   "description": "A web platform for commerce students with course-specific hubs, Gemini-powered AI tutors, discussion forums, and resource management.",
   "requestFramePermissions": [
     "microphone"
