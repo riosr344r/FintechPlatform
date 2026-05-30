@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import type { Course, BotPersonality } from '../types';
 import { UnifiedChat } from './UnifiedChat';
 import { LiveConversation } from './LiveConversation';
-import { MessageSquare, PhoneCall } from 'lucide-react';
+import { MessageSquare, PhoneCall, BookOpenText } from 'lucide-react';
 
 interface CourseHubProps {
   course: Course;
@@ -12,7 +12,8 @@ interface CourseHubProps {
 }
 
 export const CourseHub: React.FC<CourseHubProps> = ({ course, userName, botPersonality }) => {
-  const [activeTab, setActiveTab] = useState<'chat' | 'call'>('chat');
+  const [activeTab, setActiveTab] = useState<'chat' | 'call' | 'tax'>('chat');
+  const isTaxAccounting = course.titleAr === 'محاسبة ضريبية';
 
   return (
     <div className="flex bg-transparent text-gray-900 dark:text-gray-100 transition-colors duration-300 relative flex-1 h-full">
@@ -35,6 +36,15 @@ export const CourseHub: React.FC<CourseHubProps> = ({ course, userName, botPerso
                   <PhoneCall size={16} />
                   المحادثة الصوتية
                </button>
+               {isTaxAccounting && (
+                   <button
+                      onClick={() => setActiveTab('tax')}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all text-sm ${activeTab === 'tax' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                   >
+                      <BookOpenText size={16} />
+                      شرح+الاختبار
+                   </button>
+               )}
            </div>
         </div>
 
@@ -45,7 +55,7 @@ export const CourseHub: React.FC<CourseHubProps> = ({ course, userName, botPerso
            <div className="absolute inset-0 z-10 flex flex-col pt-4">
                {activeTab === 'chat' ? (
                    <UnifiedChat courseSystemPrompt={course.systemPrompt} userName={userName} knowledgeBase={course.knowledgeBase} botPersonality={botPersonality} courseTitle={course.titleAr} />
-               ) : (
+               ) : activeTab === 'call' ? (
                    <div className="flex-grow overflow-y-auto px-4 pb-12 flex justify-center items-start pt-6">
                        <div className="w-full max-w-4xl">
                            <LiveConversation 
@@ -56,6 +66,8 @@ export const CourseHub: React.FC<CourseHubProps> = ({ course, userName, botPerso
                            />
                        </div>
                    </div>
+               ) : (
+                   <iframe src="/tax_course.html" className="w-full h-full border-none" title="Tax Accounting Course" />
                )}
            </div>
         </div>

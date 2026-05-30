@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0f1a;--bg2:#131629;--bg3:#1a1d2e;--bg4:#1f2235;--accent:#4f8ef7;--accent2:#6c63ff;--accent3:#00d4aa;--border:#ffffff18;--border2:#ffffff28;--text:#f0f2ff;--text2:#a0a8c8;--text3:#6b7299;--correct:#00c896;--wrong:#ff4d6d;--warn:#f59e0b}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-size:11px;color:var(--text3)}
+.hdr-badge{background:linear-gradient(135deg,#ff6b35,#f7c948);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:#fff}
+.mode-tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 16px;overflow-x:auto;gap:0}
+.mode-tab{padding:12px 16px;border:none;background:transparent;cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:var(--text3);border-bottom:3px solid transparent;transition:.2s;white-space:nowrap;flex-shrink:0}
+.mode-tab:hover{color:var(--text)}
+.mode-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.ch-tabs{display:flex;gap:4px;padding:14px 16px 0;background:var(--bg);flex-wrap:wrap}
+.ch-tab{padding:7px 12px;border:1px solid var(--border);border-bottom:none;border-radius:9px 9px 0 0;cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);background:var(--bg3);transition:.2s;white-space:nowrap}
+.ch-tab.active{background:var(--bg2);color:var(--accent);border-color:var(--accent)60}
+.nav-wrap{background:var(--bg2);border-bottom:1px solid var(--border);padding:9px 16px}
+.nav-tabs{display:flex;gap:4px;background:var(--bg3);border-radius:12px;padding:5px;border:1px solid var(--border)}
+.nav-tab{flex:1;padding:8px 6px;border:none;border-radius:8px;cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;background:transparent;color:var(--text2);transition:.2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.nav-tab:hover{background:var(--bg4);color:var(--text)}
+.nav-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 15px #4f8ef740}
+.content{padding:16px 16px 40px}
+.section{display:none}.section.active{display:block}
+.learn-intro{background:linear-gradient(135deg,#1a1f3a,#0f1628);border:1px solid var(--border2);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.li-icon{font-size:28px;flex-shrink:0}.li-title{font-size:16px;font-weight:700;margin-bottom:3px}
+.li-sub{font-size:12px;color:var(--text2);line-height:1.6}
+.acc{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.acc-head{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;cursor:pointer;background:var(--bg3);transition:.2s}
+.acc-head:hover{background:var(--bg4)}
+.acc-hr{display:flex;align-items:center;gap:10px}
+.acc-num{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.acc-title{font-size:14px;font-weight:600}
+.acc-arrow{color:var(--text3);transition:.3s;font-size:16px}
+.acc-arrow.open{transform:rotate(180deg);color:var(--accent)}
+.acc-body{display:none;padding:16px;background:var(--bg);border-top:1px solid var(--border)}
+.acc-body.open{display:block}
+.flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:9px;margin-bottom:12px}
+.flip-card{height:115px;perspective:1000px;cursor:pointer}
+.flip-inner{width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d;position:relative}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-front,.flip-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px;text-align:center;border:1px solid var(--border)}
+.flip-front{background:var(--bg3)}.flip-back{background:linear-gradient(135deg,#1a2a4a,#0f1e35);transform:rotateY(180deg);border-color:#4f8ef740}
+.flip-icon{font-size:20px;margin-bottom:5px}.flip-label{font-size:12px;font-weight:600}.flip-desc{font-size:11px;color:var(--text2);line-height:1.5}.flip-hint{font-size:10px;color:var(--text3);margin-top:4px}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{background:var(--bg4);padding:8px 11px;text-align:right;font-weight:600;color:var(--accent);border-bottom:1px solid var(--border)}
+.dtable td{padding:8px 11px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);line-height:1.6}
+.dtable tr:last-child td{border-bottom:none}.dtable tr:hover td{background:var(--bg4);color:var(--text)}
+.timeline{position:relative;padding-right:24px}
+.timeline::before{content:'';position:absolute;right:8px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--accent2))}
+.tl-item{position:relative;margin-bottom:14px}
+.tl-dot{position:absolute;right:-19px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl-year{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:3px}
+.tl-text{font-size:12px;color:var(--text2);line-height:1.6;background:var(--bg3);padding:8px 11px;border-radius:8px;border:1px solid var(--border)}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin:2px}
+.tag-blue{background:#4f8ef720;color:#4f8ef7;border:1px solid #4f8ef740}
+.tag-teal{background:#00d4aa20;color:#00d4aa;border:1px solid #00d4aa40}
+.tag-purple{background:#6c63ff20;color:#6c63ff;border:1px solid #6c63ff40}
+.tag-amber{background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40}
+.tag-red{background:#ff4d6d20;color:#ff4d6d;border:1px solid #ff4d6d40}
+.formula{background:linear-gradient(135deg,#1a2a1a,#0f1e15);border:1px solid #00c89640;border-radius:10px;padding:11px 14px;font-size:13px;margin:6px 0;line-height:1.8}
+.formula strong{color:var(--accent3)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.fcard{padding:12px;border-radius:10px;border:1px solid var(--border)}
+.fcard.blue{background:#4f8ef712;border-color:#4f8ef740}.fcard.amber{background:#f59e0b12;border-color:#f59e0b40}
+.fcard.teal{background:#00d4aa12;border-color:#00d4aa40}.fcard.purple{background:#6c63ff12;border-color:#6c63ff40}
+.fcard.red{background:#ff4d6d12;border-color:#ff4d6d40}.fcard.green{background:#00c89612;border-color:#00c89640}
+.fcard-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.fcard.blue .fcard-title{color:var(--accent)}.fcard.amber .fcard-title{color:var(--warn)}
+.fcard.teal .fcard-title{color:var(--accent3)}.fcard.purple .fcard-title{color:#6c63ff}
+.fcard.red .fcard-title{color:var(--wrong)}.fcard.green .fcard-title{color:var(--correct)}
+.fcard-body{font-size:12px;color:var(--text2);line-height:1.7}
+/* QUIZ */
+.quiz-hdr{background:linear-gradient(135deg,#1a1f3a,#0f1628);border:1px solid var(--border2);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.quiz-hdr-title{font-size:16px;font-weight:700;margin-bottom:3px}
+.quiz-hdr-sub{font-size:12px;color:var(--text2)}
+.quiz-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stat-b{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-size:12px;display:flex;align-items:center;gap:5px}
+.stat-b span{color:var(--text3)}.stat-b strong{color:var(--text)}
+.prog-wrap{margin-bottom:16px}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px}
+.prog-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:.4s}
+.sec-div{display:flex;align-items:center;gap:10px;margin:18px 0 12px}
+.sdl{flex:1;height:1px;background:var(--border)}.sdlabel{font-size:11px;font-weight:700;color:var(--text3);padding:3px 10px;background:var(--bg3);border-radius:20px;border:1px solid var(--border);white-space:nowrap}
+.q-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;transition:.3s}
+.q-card.ans-ok{border-color:#00c89650}.q-card.ans-bad{border-color:#ff4d6d50}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:5px}
+.q-num-b{background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:3px 8px;font-size:11px;color:var(--text3);font-weight:600}
+.q-badges{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.q-type-b{font-size:11px;padding:3px 8px;border-radius:7px;font-weight:600}
+.type-tf{background:#6c63ff20;color:#6c63ff;border:1px solid #6c63ff40}
+.type-mc{background:#4f8ef720;color:#4f8ef7;border:1px solid #4f8ef740}
+.q-ch-b{font-size:10px;padding:2px 7px;border-radius:6px;font-weight:600;background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b40}
+.q-text{font-size:13px;font-weight:600;line-height:1.8;margin-bottom:13px;color:var(--text)}
+.tf-opts{display:flex;gap:8px}
+.tf-btn{flex:1;padding:10px;border-radius:9px;border:1px solid var(--border);background:var(--bg4);cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:var(--text2);transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.tf-btn:hover:not(:disabled){background:var(--bg);border-color:var(--border2);color:var(--text)}
+.tf-btn.correct{background:#00c89620;border-color:var(--correct);color:var(--correct)}
+.tf-btn.wrong{background:#ff4d6d20;border-color:var(--wrong);color:var(--wrong)}
+.tf-btn.reveal{background:#00c89610;border-color:#00c89640;color:var(--correct)}
+.mc-opts{display:flex;flex-direction:column;gap:7px}
+.mc-btn{padding:10px 13px;border-radius:9px;border:1px solid var(--border);background:var(--bg4);cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:500;color:var(--text2);transition:.2s;text-align:right;line-height:1.6;display:flex;align-items:flex-start;gap:8px}
+.mc-btn:hover:not(:disabled){background:var(--bg);border-color:var(--border2);color:var(--text)}
+.mc-btn.correct{background:#00c89620;border-color:var(--correct);color:var(--correct)}
+.mc-btn.wrong{background:#ff4d6d20;border-color:var(--wrong);color:var(--wrong)}
+.mc-btn.reveal{background:#00c89610;border-color:#00c89640;color:var(--correct)}
+.opt-lbl{width:22px;height:22px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.mc-btn.correct .opt-lbl{background:#00c89630;border-color:var(--correct)}
+.mc-btn.wrong .opt-lbl{background:#ff4d6d30;border-color:var(--wrong)}
+.mc-btn.reveal .opt-lbl{background:#00c89620;border-color:#00c89660}
+.explain{margin-top:9px;padding:10px 12px;border-radius:9px;font-size:12px;line-height:1.7;display:none}
+.explain.show{display:block}
+.explain.ok{background:#00c89615;border:1px solid #00c89640;color:#00d4aa}
+.explain.bad{background:#ff4d6d15;border:1px solid #ff4d6d40;color:#ff8099}
+/* BANNERS */
+.final-banner{background:linear-gradient(135deg,#1a1030,#0d0820);border:1px solid #6c63ff40;border-radius:16px;padding:22px;margin-bottom:20px;text-align:center}
+.final-banner-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:7px}
+.final-banner-sub{font-size:13px;color:var(--text2);line-height:1.7}
+.final-dist{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:14px 0}
+.dist-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px;text-align:center}
+.dist-card-title{font-size:11px;color:var(--text3);margin-bottom:5px}
+.dist-card-nums{font-size:12px;font-weight:600;color:var(--text)}
+.start-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:11px;padding:12px 30px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 4px 18px #4f8ef750;margin-top:8px}
+.start-btn:hover{opacity:.9;transform:translateY(-1px)}
+/* SCORE */
+.score-wrap{text-align:center;padding:30px 16px}
+.score-circle{width:130px;height:130px;border-radius:50%;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.score-circle::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--accent) var(--pct),var(--bg3) 0);mask:radial-gradient(circle at center,transparent 53%,black 54%)}
+.score-num{font-size:32px;font-weight:800}.score-den{font-size:12px;color:var(--text3)}
+.score-title{font-size:17px;font-weight:700;margin-bottom:5px}
+.score-msg{font-size:13px;color:var(--text2);margin-bottom:20px}
+.score-bd{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.bd-item{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:8px 14px;text-align:center}
+.bd-n{font-size:18px;font-weight:700}.bd-l{font-size:11px;color:var(--text3);margin-top:2px}
+.restart-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:10px 26px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer}
+.restart-btn:hover{opacity:.9}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div><div class="hdr-logo">فينتك</div><div class="hdr-sub">كلية التجارة</div></div>
+  <div style="text-align:center"><div style="font-size:13px;font-weight:700">المحاسبة الضريبية</div><div style="font-size:11px;color:var(--text3)" id="sub-title">الفصل الأول</div></div>
+  <div class="hdr-badge" id="top-badge">📚 Ch.1</div>
+</div>
+
+<!-- MODE TABS -->
+<div class="mode-tabs">
+  <div class="mode-tab active" onclick="switchMode('chapters',this)">📚 الفصول</div>
+  <div class="mode-tab" onclick="switchMode('final',this)">🏆 الاختبار النهائي</div>
+  <div class="mode-tab" onclick="switchMode('maqali',this)">📝 اختبار المقالي</div>
+</div>
+
+<!-- ══════════ CHAPTERS VIEW ══════════ -->
+<div id="mode-chapters">
+  <div class="ch-tabs">
+    <div class="ch-tab active" onclick="switchChapter(1,this)">ف١ — الجمركية</div>
+    <div class="ch-tab" onclick="switchChapter(2,this)">ف٢ — القيمة المضافة</div>
+    <div class="ch-tab" onclick="switchChapter(3,this)">ف٣ — الدمغة</div>
+    <div class="ch-tab" onclick="switchChapter(4,this)">ف٤ — أرباح الأشخاص الاعتبارية</div>
+  </div>
+  <div class="nav-wrap">
+    <div class="nav-tabs">
+      <div class="nav-tab active" id="tab-learn" onclick="switchTab('learn',this)"><span>📖</span>الشرح</div>
+      <div class="nav-tab" id="tab-exam" onclick="switchTab('exam',this)"><span>📝</span>الاختبار</div>
+    </div>
+  </div>
+  <div class="content">
+    <!-- CH1 LEARN -->
+    <div id="ch1-learn" class="section active">
+      <div class="learn-intro"><div class="li-icon">🏛️</div><div><div class="li-title">الفصل الأول: الضريبة الجمركية</div><div class="li-sub">اضغط على أي محور لاستعراضه. اضغط على البطاقات لقلبها.</div></div></div>
+      <div class="acc" id="a1_1"><div class="acc-head" onclick="tog('a1_1')"><div class="acc-hr"><div class="acc-num">١</div><div class="acc-title">التطور التاريخي والمفهوم والخصائص</div></div><div class="acc-arrow" id="ar_a1_1">▾</div></div>
+      <div class="acc-body" id="bd_a1_1">
+        <div class="flip-grid">
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">⚔️</div><div class="flip-label">1100–1300م</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-label" style="color:var(--accent);margin-bottom:4px">الحروب الصليبية</div><div class="flip-desc">زيادة التجارة → فرض ضريبة جمركية بين المدن الإيطالية وأفريقيا وآسيا</div></div></div></div>
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">🏭</div><div class="flip-label">1760–1830م</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-label" style="color:var(--accent);margin-bottom:4px">الثورة الصناعية</div><div class="flip-desc">الدول الناشئة رفعت التعريفة لحماية صناعاتها</div></div></div></div>
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">🇪🇬</div><div class="flip-label">مصر — القانون 207/2020</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-label" style="color:var(--accent3);margin-bottom:4px">التطور المحلي</div><div class="flip-desc">من نظام العشور → قوانين متتالية → القانون 207 لسنة 2020م المعمول به حالياً</div></div></div></div>
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">💸</div><div class="flip-label">غير مباشرة + عينية</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-desc">المستورد يسدد وينقل العبء للمشتري. لا إعفاءات شخصية</div></div></div></div>
+        </div>
+        <div class="formula"><strong>القيمة فوب:</strong> ثمن الشراء + عمولة + سمسرة + أوعية (بخلاف الأغطية والحاويات)<br><strong>القيمة سيف:</strong> فوب + شحن + تأمين<br><strong>المقبولة جمركياً:</strong> سيف + تعبئة + تغليف + تفريغ</div>
+      </div></div>
+      <div class="acc" id="a1_2"><div class="acc-head" onclick="tog('a1_2')"><div class="acc-hr"><div class="acc-num">٢</div><div class="acc-title">المصطلحات والأنواع والجزء العملي</div></div><div class="acc-arrow" id="ar_a1_2">▾</div></div>
+      <div class="acc-body" id="bd_a1_2">
+        <div class="fgrid">
+          <div class="fcard blue"><div class="fcard-title">مستودع/مخزن عام</div><div class="fcard-body">الجعالة = 11% × الإيرادات السنوية<br>أدنى: 50,000 | أقصى: 750,000 ج</div></div>
+          <div class="fcard amber"><div class="fcard-title">مستودع/مخزن خاص</div><div class="fcard-body">الجعالة = 1.1% × الضريبة والرسوم<br>أدنى: 25,000 | أقصى: 500,000 ج</div></div>
+        </div>
+        <table class="dtable" style="font-size:12px">
+          <tr><th>نوع السيارة</th><th>سعة المحرك</th><th>جمركية</th><th>تنمية</th><th>جدول</th><th>ق.م</th></tr>
+          <tr><td rowspan="3">بنزين</td><td>حتى 1600</td><td>40%</td><td>3%</td><td>1%</td><td>14%</td></tr>
+          <tr><td>1601–2000</td><td>135%</td><td>5%</td><td>15%</td><td>14%</td></tr>
+          <tr><td>أكثر من 2000</td><td>135%</td><td>8.5%</td><td>30%</td><td>14%</td></tr>
+          <tr><td>كهربائية</td><td>—</td><td style="color:var(--correct)">0</td><td style="color:var(--correct)">0</td><td style="color:var(--correct)">0</td><td>14%</td></tr>
+        </table>
+      </div></div>
+    </div>
+    <!-- CH2 LEARN -->
+    <div id="ch2-learn" class="section">
+      <div class="learn-intro"><div class="li-icon">💰</div><div><div class="li-title">الفصل الثاني: الضريبة على القيمة المضافة</div><div class="li-sub">اضغط على أي محور لاستعراضه.</div></div></div>
+      <div class="acc" id="a2_1"><div class="acc-head" onclick="tog('a2_1')"><div class="acc-hr"><div class="acc-num">١</div><div class="acc-title">التطور والتعريف والخصائص</div></div><div class="acc-arrow" id="ar_a2_1">▾</div></div>
+      <div class="acc-body" id="bd_a2_1">
+        <div class="timeline">
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">القانون 133/1981م — ضريبة الاستهلاك</div><div class="tl-text">دمج رسوم الإنتاج والاستهلاك. انتقادات: تفاوت نسب، سداد كل 10 أيام، ضريبة إضافية 26% سنوياً</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">القانون 11/1991م — الضريبة العامة على المبيعات</div><div class="tl-text">3 مراحل: منتج → جملة → تجزئة</div></div>
+          <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">القانون 67/2016م — ضريبة القيمة المضافة</div><div class="tl-text">خفضت الضريبة الإضافية إلى 18% سنوياً (1.5% شهرياً)</div></div>
+        </div>
+        <div class="formula"><strong>السعر العام:</strong> 14% | <strong>صفر</strong> للصادرات | <strong>حد التسجيل:</strong> 500,000 ج سنوياً<br><strong>الضريبة المستحقة =</strong> وعاء البيع × 14% − وعاء الشراء × 14%</div>
+      </div></div>
+      <div class="acc" id="a2_2"><div class="acc-head" onclick="tog('a2_2')"><div class="acc-hr"><div class="acc-num">٢</div><div class="acc-title">الواقعة المنشئة والعقوبات والجزء العملي</div></div><div class="acc-arrow" id="ar_a2_2">▾</div></div>
+      <div class="acc-body" id="bd_a2_2">
+        <div class="fgrid">
+          <div class="fcard teal"><div class="fcard-title">الواقعة المنشئة</div><div class="fcard-body">محلية: بيع السلعة أو أداء الخدمة<br>مستوردة: الإفراج الجمركي<br>لا تستحق على: العابرة، الانتقال بين خطوط الإنتاج، الميراث</div></div>
+          <div class="fcard red"><div class="fcard-title">العقوبات</div><div class="fcard-body">تأخر ≤60 يوم: غرامة 3,000–50,000 ج + 1.5% شهرياً<br>تأخر >60 يوم: غرامة 5,000–200,000 ج + 1.5% شهرياً</div></div>
+        </div>
+        <div class="formula"><strong>سلع خاضعة للجدول والقيمة المضافة معاً (مثل التكييف):</strong><br>ضريبة الجدول = وعاء × 8%<br>ضريبة القيمة المضافة = (وعاء + ضريبة الجدول) × 14%</div>
+      </div></div>
+    </div>
+    <!-- CH3 LEARN -->
+    <div id="ch3-learn" class="section">
+      <div class="learn-intro"><div class="li-icon">🏷️</div><div><div class="li-title">الفصل الثالث: ضريبة الدمغة</div><div class="li-sub">اضغط على أي محور لاستعراضه.</div></div></div>
+      <div class="acc" id="a3_1"><div class="acc-head" onclick="tog('a3_1')"><div class="acc-hr"><div class="acc-num">١</div><div class="acc-title">المفهوم والخصائص وطرق التحصيل</div></div><div class="acc-arrow" id="ar_a3_1">▾</div></div>
+      <div class="acc-body" id="bd_a3_1">
+        <div class="formula" style="margin-bottom:12px"><strong>التعريف:</strong> علامات تُنقش ميكانيكياً أو آلياً لإضفاء الصفة الرسمية على المستند.</div>
+        <div class="flip-grid">
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">🔀</div><div class="flip-label">مباشرة وغير مباشرة</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-desc">مباشرة على المرتبات. غير مباشرة على استهلاك الغاز والكهرباء</div></div></div></div>
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">📊</div><div class="flip-label">نوعية أو نسبية</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-desc">نوعية: مبلغ ثابت. نسبية: نسبة من قيمة المعاملة</div></div></div></div>
+          <div class="flip-card" onclick="this.classList.toggle('flipped')"><div class="flip-inner"><div class="flip-front"><div class="flip-icon">🏷️</div><div class="flip-label">طوابع الدمغة</div><div class="flip-hint">اضغط</div></div><div class="flip-back"><div class="flip-desc">⭐ أكثر طرق التحصيل شيوعاً (stamp tax). آلات التخليص هي الأحدث</div></div></div></div>
+        </div>
+      </div></div>
+      <div class="acc" id="a3_2"><div class="acc-head" onclick="tog('a3_2')"><div class="acc-hr"><div class="acc-num">٢</div><div class="acc-title">الأوعية النوعية والنسبية</div></div><div class="acc-arrow" id="ar_a3_2">▾</div></div>
+      <div class="acc-body" id="bd_a3_2">
+        <table class="dtable" style="margin-bottom:12px">
+          <tr><th>الشهادة</th><th>الضريبة النوعية</th></tr>
+          <tr><td>بكالوريوس / ليسانس</td><td style="color:var(--accent3)">15 ج</td></tr>
+          <tr><td>دبلوم دراسات عليا / ماجستير</td><td style="color:var(--accent3)">30 ج</td></tr>
+          <tr><td>دكتوراه</td><td style="color:var(--accent3)">60 ج</td></tr>
+        </table>
+        <table class="dtable">
+          <tr><th>الوعاء</th><th>النسبة</th><th>من يتحمل</th></tr>
+          <tr><td>تأمين على الحياة</td><td>1%</td><td>المأمون والشركة مناصفةً</td></tr>
+          <tr><td>تأمين على النقل والأخرى</td><td>11%</td><td>المأمون والشركة مناصفةً</td></tr>
+          <tr><td>إجمالي أقساط التأمين (سنوياً)</td><td>8 في الألف</td><td>شركة التأمين وحدها</td></tr>
+          <tr><td>أوراق العقود</td><td>90 قرش/ورقة</td><td>كل طرف على نسخته</td></tr>
+          <tr><td>محمول كارت مدفوع مقدماً</td><td>67 قرش/شهر</td><td>المشترك</td></tr>
+          <tr><td>تليفون أرضي / شهري</td><td>8 ج/سنة</td><td>المشترك</td></tr>
+          <tr><td>أوراق مالية — بائع/مشترٍ مقيم</td><td>0.5 في الألف</td><td>كل طرف على حدة</td></tr>
+          <tr><td>أوراق مالية — بائع/مشترٍ غير مقيم</td><td>1.25 في الألف</td><td>كل طرف على حدة</td></tr>
+        </table>
+      </div></div>
+    </div>
+    <!-- CH4 LEARN -->
+    <div id="ch4-learn" class="section">
+      <div class="learn-intro"><div class="li-icon">🏢</div><div><div class="li-title">الفصل الرابع: الضريبة على أرباح الأشخاص الاعتبارية</div><div class="li-sub">اضغط على أي محور لاستعراضه.</div></div></div>
+      <div class="acc" id="a4_1"><div class="acc-head" onclick="tog('a4_1')"><div class="acc-hr"><div class="acc-num">١</div><div class="acc-title">المفهوم والخصائص ونطاق السريان</div></div><div class="acc-arrow" id="ar_a4_1">▾</div></div>
+      <div class="acc-body" id="bd_a4_1">
+        <div class="fgrid">
+          <div class="fcard blue"><div class="fcard-title">الشخص الاعتباري المقيم</div><div class="fcard-body">تُفرض الضريبة على أرباحه داخل وخارج مصر. يُعتبر مقيماً إذا: تأسس بالقانون المصري، أو مركز إدارته في مصر، أو أكثر من 50% من رأس ماله لأشخاص مصرية</div></div>
+          <div class="fcard purple"><div class="fcard-title">الشخص الاعتباري غير المقيم</div><div class="fcard-body">تُفرض الضريبة على أرباحه الموجودة في مصر فقط عبر منشأة دائمة. المنشأة الدائمة: كل مكان ثابت يتم من خلاله تنفيذ أعمال الشركة</div></div>
+        </div>
+        <div class="formula"><strong>نسب الضريبة:</strong><br>22.5% — شركات الأشخاص والأموال<br>40% — هيئة قناة السويس والبنك المركزي<br>40.55% — شركات البترول والغاز الإنتاجية</div>
+        <div class="formula" style="margin-top:8px"><strong>الإقرار الضريبي:</strong> قبل أول مايو من كل عام (للسنة المنتهية 31 ديسمبر) أو خلال الأربعة أشهر التالية لتاريخ نهاية السنة المالية</div>
+      </div></div>
+      <div class="acc" id="a4_2"><div class="acc-head" onclick="tog('a4_2')"><div class="acc-hr"><div class="acc-num">٢</div><div class="acc-title">الإيرادات والتكاليف وتحديد الوعاء</div></div><div class="acc-arrow" id="ar_a4_2">▾</div></div>
+      <div class="acc-body" id="bd_a4_2">
+        <div class="fgrid" style="margin-bottom:12px">
+          <div class="fcard teal"><div class="fcard-title">كوبونات الأرباح (توزيعات)</div><div class="fcard-body">أوراق مالية مقيدة بالبورصة: ضريبة 5% خارج الدفاتر (يُخصم من الربح المحاسبي)<br>غير مقيدة: ضريبة 10% خارج الدفاتر (يُخصم من الربح المحاسبي)</div></div>
+          <div class="fcard amber"><div class="fcard-title">الأرباح الرأسمالية</div><div class="fcard-body">من مباني/أراضي/معنويات/فنية: خاضعة للضريبة<br>من سيارات/أثاث/آلات/حاسبات: غير خاضعة<br>من سداد سندات بأقل من الاسمية: خاضعة</div></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text)">الإهلاك الضريبي:</div>
+        <table class="dtable" style="font-size:12px">
+          <tr><th>نوع الأصل</th><th>معدل الإهلاك</th></tr>
+          <tr><td>مباني</td><td style="color:var(--accent3)">5% (قسط ثابت)</td></tr>
+          <tr><td>الأصول المعنوية المشتراة</td><td style="color:var(--accent3)">10% (قسط ثابت)</td></tr>
+          <tr><td>باقي الأصول (سيارات، أثاث، آلات، حاسبات)</td><td style="color:var(--accent3)">25% أو 50% للحاسبات (أساس الإهلاك)</td></tr>
+          <tr><td>الأراضي والمجوهرات والأعمال الفنية</td><td style="color:var(--wrong)">لا يُحسب إهلاك</td></tr>
+        </table>
+        <div class="formula" style="margin-top:10px"><strong>أساس الإهلاك (للأصول المتناقصة):</strong><br>رصيد أول المدة − مجموع الإهلاك<br>+ الإضافات (تكلفة المشتريات)<br>− الاستبعادات (ثمن المباع)<br>= أساس الإهلاك<br><br>إذا النتيج ≥10,000 ج → يُحسب إهلاك 25% (أو 50% للحاسبات)<br>إذا النتيجة صفر أو سالب → لا إهلاك، والرقم السالب يُضاف للربح</div>
+      </div></div>
+    </div>
+    <!-- EXAM SECTIONS -->
+    <div id="ch1-exam" class="section"><div id="ch1-exam-content"></div></div>
+    <div id="ch2-exam" class="section"><div id="ch2-exam-content"></div></div>
+    <div id="ch3-exam" class="section"><div id="ch3-exam-content"></div></div>
+    <div id="ch4-exam" class="section"><div id="ch4-exam-content"></div></div>
+  </div>
+</div>
+
+<!-- ══════════ FINAL EXAM VIEW ══════════ -->
+<div id="mode-final" style="display:none">
+  <div class="content">
+    <div id="final-content">
+      <div class="final-banner">
+        <div class="final-banner-title">🏆 الاختبار النهائي الشامل</div>
+        <div class="final-banner-sub">أسئلة عشوائية من الفصول الأربعة</div>
+        <div class="final-dist">
+          <div class="dist-card"><div class="dist-card-title">ف١ الجمركية</div><div class="dist-card-nums">7 صح/خطأ + 9 اختيار</div></div>
+          <div class="dist-card"><div class="dist-card-title">ف٢ القيمة المضافة</div><div class="dist-card-nums">7 صح/خطأ + 6 اختيار</div></div>
+          <div class="dist-card"><div class="dist-card-title">ف٣ الدمغة</div><div class="dist-card-nums">6 صح/خطأ + 5 اختيار</div></div>
+          <div class="dist-card"><div class="dist-card-title">ف٤ الأشخاص الاعتبارية</div><div class="dist-card-nums">5 صح/خطأ + 5 اختيار</div></div>
+          <div class="dist-card" style="border-color:var(--accent)60;background:#4f8ef715"><div class="dist-card-title" style="color:var(--accent)">الإجمالي</div><div class="dist-card-nums" style="color:var(--accent);font-size:15px;font-weight:800">25 صح/خطأ + 25 اختيار = 50 سؤال</div></div>
+        </div>
+        <button class="start-btn" onclick="buildFinal()">🚀 ابدأ الاختبار النهائي</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MAQALI VIEW ══════════ -->
+<div id="mode-maqali" style="display:none">
+  <div class="content">
+    <div id="maqali-content">
+      <div class="final-banner">
+        <div class="final-banner-title">📝 اختبار المقالي</div>
+        <div class="final-banner-sub">مصطلحات جمركية + نسب مئوية — اختر الإجابة الصحيحة</div>
+        <div class="final-dist">
+          <div class="dist-card"><div class="dist-card-title">المصطلحات الجمركية</div><div class="dist-card-nums">10 أسئلة MCQ</div></div>
+          <div class="dist-card"><div class="dist-card-title">النسب المئوية</div><div class="dist-card-nums">10 أسئلة MCQ</div></div>
+          <div class="dist-card" style="border-color:var(--accent)60;background:#4f8ef715"><div class="dist-card-title" style="color:var(--accent)">الإجمالي</div><div class="dist-card-nums" style="color:var(--accent);font-size:15px;font-weight:800">20 سؤال اختيار متعدد</div></div>
+        </div>
+        <button class="start-btn" onclick="buildMaqali()">🚀 ابدأ اختبار المقالي</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// BANKS
+// ══════════════════════════════════════
+const TF1=[
+  {q:'تتمثل الخصائص المميزة للضريبة الجمركية عن ضرائب الأشخاص الطبيعيين في أنها ضريبة غير مباشرة وعينية ونوعية السعر.',a:true,e:'صحيح — هذه الخصائص الثلاث هي ما تميزها.'},
+  {q:'يتمثل أوجه التشابه بين المخازن الجمركية المؤقتة والمستودعات في مكان وجود كل منهما.',a:false,e:'خطأ — المخازن داخل الموانئ والمستودعات خارجها.'},
+  {q:'تتشابه الأسواق الحرة والمناطق الحرة في قيامهما ببعض العمليات الصناعية.',a:false,e:'خطأ — الأسواق الحرة أماكن بيع فقط ولا تمارس عمليات صناعية.'},
+  {q:'تُحتسب الجعالة في المستودع العام بنسبة 11% من إيراداته السنوية بحد أدنى 50,000 ج وحد أقصى 750,000 ج.',a:true,e:'صحيح — هذه القاعدة المقررة.'},
+  {q:'تُحتسب الجعالة في المستودع الخاص بنسبة 1.1% من الضريبة والرسوم بحد أدنى 25,000 ج وحد أقصى 750,000 ج.',a:false,e:'خطأ — الحد الأقصى للمستودع الخاص 500,000 ج.'},
+  {q:'تشتمل تكاليف التعبئة على تكلفة الحاويات والأغطية.',a:false,e:'خطأ — تكاليف التعبئة تستثني الحاويات والأغطية.'},
+  {q:'يتم إعفاء السيارات المستوردة من دول الاتحاد الأوروبي أو تركيا من كامل الرسوم والضرائب.',a:false,e:'خطأ — يُعفى من الضريبة الجمركية فقط، باقي الرسوم تُحتسب كالمعتاد.'},
+  {q:'السيارات الكهربائية المستوردة معفاة تماماً من جميع الضرائب والرسوم.',a:false,e:'خطأ — معفاة من الجمركية والتنمية والجدول فقط، لكنها تخضع لضريبة القيمة المضافة 14%.'},
+  {q:'القيمة سيف = القيمة فوب − تكاليف الشحن والتأمين.',a:false,e:'خطأ — القيمة سيف = القيمة فوب + تكاليف الشحن والتأمين.'},
+  {q:'تتدرج الضريبة الجمركية للسيارات المستوردة جديدة من صفر إلى 135%.',a:true,e:'صحيح — من صفر (كهربائية) إلى 135% (بنزين أكثر من 1600 سي سي).'},
+  {q:'مدة السماح في نظام السماح المؤقت سنة ونصف والحد الأقصى سنتان ونصف.',a:true,e:'صحيح — المدة الأصلية 18 شهراً والحد الأقصى 30 شهراً.'},
+  {q:'في نظام السماح المؤقت البيع بدون موافقة الجمارك تُفرض ضريبة إضافية 3% شهرياً.',a:true,e:'صحيح — البيع بدون موافقة الجمارك: ضريبة إضافية 3% × عدد الأشهر.'},
+  {q:'القيمة المقبولة جمركياً = القيمة سيف + تكاليف التعبئة والتغليف والتفريغ.',a:true,e:'صحيح — هذه هي معادلة القيمة المقبولة جمركياً.'},
+  {q:'تُحتسب الجعالة في حالة الأدخنة في المستودعات الخاصة بنسبة 1.1% من قيمتها.',a:true,e:'صحيح — المشروبات الكحولية والأدخنة في المستودع الخاص بنسبة 1.1%.'},
+  {q:'السيارات البنزين حتى 1600 سي سي تخضع لضريبة جمركية 40% ورسم تنمية 3% وضريبة جدول 1%.',a:true,e:'صحيح — هذه النسب المقررة في الجدول.'},
+  {q:'رسم التنمية للسيارات يُحسب على القيمة المقبولة جمركياً مباشرةً.',a:false,e:'خطأ — رسم التنمية يُحسب من القيمة المقبولة جمركياً مضافاً إليها الضريبة الجمركية.'},
+  {q:'تتطابق نسبة الضريبة الجمركية للسيارات الكهربائية وسيارات الهايبرد.',a:false,e:'خطأ — الكهربائية صفر، الهايبرد تتراوح بين 30% و100%.'},
+  {q:'عمولة الشراء تُضاف إلى القيمة فوب.',a:true,e:'صحيح — عمولة الشراء من مكونات القيمة فوب.'},
+  {q:'خصم 10% من القيمة فوب عن سنة الموديل ثم 5% عن كل سنة تالية بحد أقصى 50%.',a:true,e:'صحيح — هذه قاعدة الخصم للسيارات المستعملة.'},
+  {q:'الحد الأقصى لمدة السماح في نظام الإفراج المؤقت سنتان.',a:true,e:'صحيح — الحد الأقصى لنظام الإفراج المؤقت سنتان.'},
+  {q:'تكلفة النقل الداخلي تُضاف إلى القيمة فوب.',a:false,e:'خطأ — تكلفة النقل الداخلي لا تُضاف إلى القيمة فوب.'},
+  {q:'المستودع الجمركي العام يُستخدم لتخزين بضائع الغير.',a:true,e:'صحيح — المستودع العام لتخزين بضائع لحساب الغير.'},
+  {q:'الخط الأصفر هو مسار للإفراج النهائي عن السلع.',a:false,e:'خطأ — الخط الأصفر خط انتظار لاستكمال المستندات وليس مساراً للإفراج النهائي.'},
+  {q:'تُفرض ضريبة العبور على السلع العابرة في الموانئ والمطارات بغرض الاستعمال المحلي.',a:false,e:'خطأ — ضريبة العبور على السلع العابرة لتغيير وسيلة النقل وليس للاستعمال المحلي.'},
+  {q:'المخلص الجمركي مرخص له بإعداد البيان الجمركي وتوقيعه نيابةً عن صاحب البضاعة لمدة سنتين قابلة للتجديد.',a:true,e:'صحيح — هذا هو تعريف المخلص الجمركي ومدة ترخيصه.'},
+];
+const MCQ1=[
+  {q:'إذا علمت أن إيرادات مستودع جمركي عام 25 مليون جنيه عام 2025، قيمة الجعالة بعد تطبيق الحد الأقصى:',opts:['2,500,000 ج','50,000 ج','3,000,000 ج','750,000 ج'],c:3,e:'الجعالة = 11% × 25,000,000 = 2,750,000 > 750,000 (الحد الأقصى).'},
+  {q:'مخزن جمركي خاص قيمة سلعه 40 مليون والضرائب 10%، الجعالة بعد الحدين:',opts:['650,000 ج','44,000 ج','40,000 ج','750,000 ج'],c:1,e:'الضرائب = 4,000,000. الجعالة = 1.1% × 4,000,000 = 44,000 ج.'},
+  {q:'سيارة أمريكية 2025 بنزين 1500 سي سي بـ 300,000 ج فوب، شحن وتأمين 25,000 ج، تفريغ 15,000 ج. القيمة المقبولة جمركياً:',opts:['340,000 ج','325,000 ج','315,000 ج','300,000 ج'],c:0,e:'القيمة = 300,000 + 25,000 + 15,000 = 340,000 ج.'},
+  {q:'بناءً على السؤال السابق، الضريبة الجمركية للسيارة (بنزين 1500 سي سي، قيمة 340,000 ج):',opts:['126,000 ج','136,000 ج','130,000 ج','120,000 ج'],c:1,e:'بنزين حتى 1600 سي سي → 40%. الضريبة = 340,000 × 40% = 136,000 ج.'},
+  {q:'رسم التنمية للسيارة السابقة (القيمة بعد الضريبة الجمركية = 476,000 ج):',opts:['4,760 ج','71,400 ج','14,280 ج','23,800 ج'],c:2,e:'رسم التنمية = 476,000 × 3% = 14,280 ج.'},
+  {q:'سيارة موديل 2016 استُوردت عام 2025. نسبة الخصم المستحقة:',opts:['50%','40%','55%','45%'],c:0,e:'10% + 5% × 8 سنوات = 50% (الحد الأقصى).'},
+  {q:'سيارة كورية 2025 بنزين 2000 سي سي، قيمة مقبولة 950,000 ج. الضريبة الجمركية:',opts:['1,282,500 ج','285,000 ج','380,000 ج','950,000 ج'],c:0,e:'بنزين 1600–2000 سي سي → 135%. الضريبة = 950,000 × 135% = 1,282,500 ج.'},
+  {q:'مواد خام بنظام السماح المؤقت بقيمة 2,800,000 ج، بيعت بالسوق المحلي بدون موافقة الجمارك بعد 4 أشهر، ضريبة 15%. الضرائب المستحقة:',opts:['470,400 ج','445,200 ج','420,000 ج','50,400 ج'],c:0,e:'الضريبة الجمركية = 420,000. الإضافية = 3% × 420,000 × 4 = 50,400. الإجمالي = 470,400 ج.'},
+  {q:'إيرادات مستودع عام ربع سنوية 110,000 ج، الجعالة بعد تطبيق الحدين:',opts:['50,000 ج','48,400 ج','40,000 ج','240,000 ج'],c:0,e:'الإيرادات السنوية = 440,000. الجعالة = 11% × 440,000 = 48,400 < 50,000 (الحد الأدنى).'},
+  {q:'مستودع خاص قيمة ضريبته الجمركية 2,000,000 جنيه. الجعالة بعد الحدين:',opts:['22,000 ج','25,000 ج','44,000 ج','50,000 ج'],c:1,e:'الجعالة = 1.1% × 2,000,000 = 22,000 ج < 25,000 ج (الحد الأدنى).'},
+  {q:'ما يرد للمستورد بعد بيع مواد خام بموافقة الجمارك (تأمين 700,000، ضريبة 420,000، إضافية 1.5% × 4 أشهر):',opts:['280,000 ج','254,800 ج','229,600 ج','257,800 ج'],c:1,e:'الإضافية = 1.5% × 420,000 × 4 = 25,200. الإجمالي = 445,200. ما يرد = 700,000 − 445,200 = 254,800 ج.'},
+  {q:'سيارة كهربائية 2025 بقيمة مقبولة جمركياً 500,000 ج. إجمالي الضريبة عليها:',opts:['صفر','70,000 ج','500,000 ج','570,000 ج'],c:1,e:'الكهربائية: جمركية+تنمية+جدول = صفر، قيمة مضافة 14% = 500,000 × 14% = 70,000 ج.'},
+  {q:'إيرادات مخزن جمركي عام 8 مليون جنيه عام 2025. الجعالة المحسوبة قبل تطبيق الحدين:',opts:['750,000 ج','88,000 ج','880,000 ج','500,000 ج'],c:2,e:'الجعالة = 11% × 8,000,000 = 880,000 ج.'},
+  {q:'في نظام السماح المؤقت تم بيع المواد بموافقة الجمارك بعد 3 أشهر من الإفراج، ضريبة جمركية 600,000 ج. الضريبة الإضافية:',opts:['9,000 ج','18,000 ج','27,000 ج','36,000 ج'],c:2,e:'الضريبة الإضافية (بموافقة) = 1.5% × 600,000 × 3 = 27,000 ج.'},
+];
+const TF2=[
+  {q:'بدأ تطبيق ضريبة القيمة المضافة بإصدار القانون 67 لسنة 2016م.',a:true,e:'صحيح — القانون 67/2016م هو قانون ضريبة القيمة المضافة.'},
+  {q:'من خصائص ضريبة القيمة المضافة أنها ضريبة قابلة وغير قابلة للخصم في آنٍ واحد.',a:true,e:'صحيح — قد يجوز خصم ضريبة الشراء وقد لا يجوز في بعض الحالات.'},
+  {q:'السعر العام لضريبة القيمة المضافة 14% بدون أي استثناءات.',a:false,e:'خطأ — سعر صفر على الصادرات للخارج.'},
+  {q:'لا تستحق ضريبة القيمة المضافة في حالة انتقال السلعة بين خطوط الإنتاج.',a:true,e:'صحيح — هذه من حالات عدم استحقاق الضريبة.'},
+  {q:'الضريبة الإضافية على التأخر في تقديم الإقرار تُحسب بنسبة 1.5% سنوياً.',a:false,e:'خطأ — الضريبة الإضافية 1.5% شهرياً (18% سنوياً).'},
+  {q:'الواقعة المنشئة للضريبة على القيمة المضافة للسلع المستوردة هي الإفراج الجمركي.',a:true,e:'صحيح.'},
+  {q:'ضريبة القيمة المضافة المستحقة السداد = واجبة الخصم − واجبة السداد.',a:false,e:'خطأ — العكس: المستحقة = واجبة السداد (البيع) − واجبة الخصم (الشراء).'},
+  {q:'الوعاء في البيع بالتقسيط = القيمة النقدية + الزيادة في الفائدة عن سعر البنك المركزي.',a:true,e:'صحيح.'},
+  {q:'بعض السلع كأجهزة التكييف تخضع لضريبة الجدول وضريبة القيمة المضافة معاً.',a:true,e:'صحيح — أجهزة التكييف: ضريبة جدول 8% ثم قيمة مضافة 14%.'},
+  {q:'السجائر تخضع لضريبة الجدول وضريبة القيمة المضافة معاً.',a:false,e:'خطأ — السجائر تخضع لضريبة الجدول فقط.'},
+  {q:'حد التسجيل في ضريبة القيمة المضافة 500,000 جنيه سنوياً.',a:true,e:'صحيح.'},
+  {q:'كل مستورد ملزم بالتسجيل بغض النظر عن حجم معاملاته.',a:true,e:'صحيح — كل مستورد أو مصدر أو وكيل توزيع ملزم بالتسجيل.'},
+  {q:'ضريبة القيمة المضافة على الصادرات 14%.',a:false,e:'خطأ — سعر الضريبة على الصادرات صفر.'},
+  {q:'غرامة التأخر في تقديم الإقرار أكثر من 60 يوماً لا تقل عن 5,000 ج.',a:true,e:'صحيح.'},
+  {q:'الخدمات الصحية معفاة من ضريبة القيمة المضافة.',a:true,e:'صحيح — الخدمات الصحية من الخدمات المعفاة.'},
+  {q:'إصدار الفاتورة وحده هو الواقعة المنشئة للضريبة على القيمة المضافة.',a:false,e:'خطأ — الواقعة تشمل: إصدار الفاتورة أو تسليم السلعة أو سداد الثمن — أيهما أسبق.'},
+  {q:'انتقال ملكية السلعة بالميراث لا تستحق عليه ضريبة القيمة المضافة.',a:true,e:'صحيح.'},
+  {q:'ضريبة الجدول للتبغ الخام = 100% من القيمة أو 40 ج للكيلوجرام أيهما أكبر.',a:true,e:'صحيح.'},
+  {q:'يجوز خصم ضريبة القيمة المضافة المدفوعة عند الشراء في جميع الأحوال.',a:false,e:'خطأ — في بعض الحالات لا يجوز الخصم.'},
+  {q:'الفترة الضريبية لضريبة القيمة المضافة شهر ميلادي كامل.',a:true,e:'صحيح.'},
+  {q:'غرامة التأخر حتى 60 يوماً لا تقل عن 3,000 ج.',a:true,e:'صحيح — غرامة التأخر حتى 60 يوماً 3,000 ج إلى 50,000 ج.'},
+  {q:'البيرة المحلية تخضع لضريبة جدول 190%.',a:true,e:'صحيح — البيرة المحلية 190% والمستوردة 225%.'},
+  {q:'ضريبة الجدول تُفرض عند البيع لأول مرة أو الاستيراد فقط.',a:true,e:'صحيح — ضريبة الجدول تُفرض عند البيع لأول مرة أو الاستيراد.'},
+  {q:'انتقال السلعة من أماكن التصنيع إلى مخازن البيع تستحق عليه ضريبة القيمة المضافة.',a:false,e:'خطأ — هذا الانتقال لا تستحق عليه الضريبة.'},
+  {q:'بدأت ضريبة القيمة المضافة بقانون ضريبة الاستهلاك رقم 133 لسنة 1981م.',a:false,e:'خطأ — قانون 133/1981م هو ضريبة الاستهلاك. ضريبة القيمة المضافة بدأت بالقانون 67/2016م.'},
+];
+const MCQ2=[
+  {q:'ضريبة القيمة المضافة المستحقة لشهر يناير 2025 بلغت 50,000 ج وسُددت في 2025/8/18م. الضريبة الإضافية:',opts:['2,520 ج','3,000 ج','1,875 ج','2,250 ج'],c:3,e:'التأخير = 3 أشهر. الإضافية = 50,000 × 1.5% × 3 = 2,250 ج.'},
+  {q:'مبيعات شهرية 8,000 ورقة بسعر 57 ج شاملة 14% ضريبة قيمة مضافة. الضريبة المستحقة:',opts:['56,000 ج','63,840 ج','40,000 ج','لا شيء'],c:0,e:'سعر بدون ضريبة = 50 ج. الضريبة/ورقة = 7 ج. الإجمالي = 8,000 × 7 = 56,000 ج.'},
+  {q:'منتج مبيعاته 600,000 ج منها 480,000 ج خاضع للضريبة، مشتريات 100,000 ج بضريبة 14%. ضريبة القيمة المضافة المستحقة:',opts:['70,000 ج','53,200 ج','56,000 ج','لا شيء'],c:2,e:'وعاء الشراء الخاضع = 80,000. ضريبة الشراء = 11,200. ضريبة البيع = 67,200. المستحق = 56,000 ج.'},
+  {q:'منتج باع بالتقسيط بـ 114,000 ج والسعر النقدي 80,000 ج، فائدة البنك المركزي 5%. ضريبة القيمة المضافة:',opts:['16,800 ج','15,960 ج','11,760 ج','لا شيء'],c:0,e:'سعر البيع النقدي = 120,000. الضريبة = 120,000 × 14% = 16,800 ج.'},
+  {q:'مبيعات منتج من السلعة (س) 100,000 ج وتخضع لضريبة جدول 8% وضريبة قيمة مضافة. قيمة فواتير المبيعات:',opts:['108,000 ج','114,000 ج','23,120 ج','123,120 ج'],c:3,e:'ضريبة الجدول = 8,000. القيمة مع الجدول = 108,000. ضريبة القيمة المضافة = 15,120. الفاتورة = 123,120 ج.'},
+  {q:'منشأة مبيعاتها 3,000,000 ج منها 2,000,000 ج صادرات والباقي محلي بضريبة جمركية 15%. ضريبة القيمة المضافة الواجبة السداد:',opts:['صفر','161,000 ج','420,000 ج','140,000 ج'],c:1,e:'المحلي = 1,000,000. الوعاء = 1,150,000. الضريبة = 161,000 ج.'},
+  {q:'ضريبة القيمة المضافة 90,000 ج عن شهر أكتوبر 2025 سُددت في 2026/3/31. الضريبة الإضافية:',opts:['2,025 ج','5,400 ج','6,750 ج','4,050 ج'],c:1,e:'التأخير = 4 أشهر. الإضافية = 90,000 × 1.5% × 4 = 5,400 ج.'},
+  {q:'منتج باع بالتقسيط بـ 100,000 ج والسعر النقدي 80,000 ج وسعر البنك المركزي 20%. ضريبة القيمة المضافة:',opts:['14,000 ج','13,200 ج','11,760 ج','15,000 ج'],c:2,e:'الوعاء = 80,000 + 80,000×5% = 84,000. الضريبة = 84,000 × 14% = 11,760 ج.'},
+];
+const TF3=[
+  {q:'تتميز ضريبة الدمغة عن ضرائب الأشخاص الطبيعيين بأنها ضريبة غير مباشرة وعينية ونوعية.',a:true,e:'صحيح — هذه الخصائص المميزة لضريبة الدمغة.'},
+  {q:'تجمع ضريبة الدمغة بين الضريبة النوعية والنسبية لذات البند الواحد.',a:false,e:'خطأ — إما نوعية أو نسبية على نفس البند، لا تجمعهما.'},
+  {q:'تعتبر طوابع الدمغة من أكثر طرق تحصيل ضريبة الدمغة شيوعاً.',a:true,e:'صحيح — طوابع الدمغة هي الأكثر شيوعاً.'},
+  {q:'يعتبر الإخطار أصل الطرق شيوعاً في تحصيل ضريبة الدمغة.',a:false,e:'خطأ — آلات التخليص هي الأصل شيوعاً في الآونة الأخيرة.'},
+  {q:'تعتبر ضريبة الدمغة على الشهادات الدراسية ضريبة نسبية.',a:false,e:'خطأ — ضريبة الدمغة على الشهادات نوعية (مبلغ ثابت).'},
+  {q:'لا تسري ضريبة الدمغة على الشهادات والإقرارات المؤقتة الخاصة بالحصول على المؤهل الدراسي.',a:true,e:'صحيح — لا تُطبق على الشهادات المؤقتة.'},
+  {q:'تسري ضريبة دمغة نوعية 90 قرشاً/ورقة على جميع أنواع العقود مناصفةً بين أطراف التعاقد.',a:false,e:'خطأ — 90 قرشاً/ورقة لكل طرف على نسخته، وليست مناصفةً على كل الأوراق.'},
+];
+const MCQ3=[
+  {q:'تقدم أحد الحاصلين على الدكتوراه لاستخراج: 1 نسخة دكتوراه، 2 نسخة ماجستير، 3 نسخ مؤقتة بكالوريوس، والشهادة الأصلية. قيمة ضريبة الدمغة:',opts:['نوعية / 285 ج','نسبية / 285 ج','نوعية / 135 ج','نسبية / 180 ج'],c:2,e:'نوعية. 1×60 + 2×30 + 1×15 (أصلية) = 135 ج. لا ضريبة على المؤقتة.'},
+  {q:'استخرج أحد الأشخاص عدد 2 شهادة دبلوم دراسات عليا. قيمة ضريبة الدمغة:',opts:['نوعية / 30 ج','نوعية / 60 ج','نسبية / 30 ج','نسبية / 60 ج'],c:1,e:'نوعية. 2 × 30 = 60 ج.'},
+  {q:'عقد توريد مكون من 7 ورقات من نسختين. قيمة ضريبة الدمغة على كل طرف على نسخته:',opts:['6.3 ج','3.15 ج','12.6 ج','1.26 ج'],c:0,e:'7 ورقات × 90 قرش = 6.3 ج للنسخة الواحدة.'},
+  {q:'يمتلك أحد الأشخاص 3 خطوط محمول كارت مدفوع مقدماً. قيمة ضريبة الدمغة الشهرية:',opts:['24.12 ج','2.01 ج','24.15 ج','2.05 ج'],c:3,e:'3 × 0.67 = 2.01 ج تُقرَّب إلى 2.05 ج.'},
+  {q:'وثيقة تأمين على الحياة بمبلغ 700 ج شهرياً. نوع وقيمة ضريبة الدمغة المستحقة على صاحبها:',opts:['نسبية / 84 ج','نسبية / 42 ج','نوعية / 84 ج','نوعية / 42 ج'],c:1,e:'نسبية. القيمة السنوية = 8,400. الضريبة = 8,400 × 1% = 84 ج. نصيب المؤمَّن = 42 ج.'},
+  {q:'وحدة حكومية اشترت مستلزمات بـ 15,000 ج. قيمة ضريبة الدمغة العادية:',opts:['165.2 ج','189.2 ج','نوعية / 189.2 ج','نسبية / 165.2 ج'],c:1,e:'الطبقة السادسة: (10,000−50) × 16÷1,000 = 159.2. الطبقة السابعة: 5,000 × 6÷1,000 = 30. الإجمالي = 189.2 ج.'},
+  {q:'شخص مقيم باع 1,200 سهم مقيد بسعر 140 ج لشخص غير مقيم. ضريبة الدمغة التي يتحملها البائع فقط:',opts:['نوعية / 210 ج','نسبية / 294 ج','نسبية / 18 ج','نسبية / 84 ج'],c:3,e:'البائع مقيم → 0.5 في الألف. = 1,200 × 140 × 0.5 ÷ 1,000 = 84 ج.'},
+  {q:'باع شخص 500 سهم مقيد بسعر 120 ج (كلا الطرفين مقيم). قيمة ضريبة الدمغة على البائع والمشتري معاً:',opts:['نسبية / 60 ج','نسبية / 30 ج','نوعية / 60 ج','نوعية / 30 ج'],c:0,e:'البائع = 30 ج. المشتري = 30 ج. الإجمالي = 60 ج.'},
+];
+const TF4=[
+  {q:'يُعتبر الشخص الاعتباري مقيماً إذا تأسس بالقانون المصري أو كان مركز إدارته في مصر.',a:false,e:'خطأ — الشرطان كافيان لوحدهما، لكن القانون يُعدّه مقيماً بأحد الشروط الثلاثة وليس بشرطيهما معاً.'},
+  {q:'تجمع الضريبة على أرباح الأشخاص الاعتبارية ما بين التبني القياسي والاقتصادي.',a:true,e:'صحيح — تجمع بين التبني الاقتصادي (من حقوق الشركة) والسياسي (أرباح خارج مصر للمقيم).'},
+  {q:'تتميز الضريبة على أرباح الأشخاص الاعتبارية عن غيرها من ضرائب الدخل بأنها ضريبة عينية نقدية.',a:false,e:'خطأ — هي ضريبة عينية (نوع معين من الدخل) ونقدية، لكن القول أنها تتميز عن غيرها بكونها نقدية فقط غير دقيق.'},
+  {q:'من الأشخاص الاعتبارية الخاضعة للضريبة شركات الأشخاص والشركات الأموال والبنوك الشركات الأجنبية بمصر غير الهادفة للربح.',a:true,e:'صحيح — البنوك والشركات الأجنبية في مصر خاضعة للضريبة.'},
+  {q:'يلتزم الشخص الاعتباري بتقديم الإقرار الضريبي خلال الأربعة أشهر التالية لتاريخ نهاية السنة المالية.',a:true,e:'صحيح — أربعة أشهر تالية لتاريخ نهاية السنة المالية.'},
+  {q:'تُفرض الضريبة على أرباح الأشخاص الاعتبارية بنسبة 22.5% من أرباحها المحققة خلال العام المالي.',a:true,e:'صحيح — 22.5% لشركات الأشخاص والأموال مع وجود استثناءات.'},
+  {q:'تخضع كوبونات الأرباح للأوراق المالية المقيدة أو غير المقيدة بالبورصة للضريبة على أرباح الأشخاص الاعتبارية بسعر موحد خارج الدفاتر.',a:true,e:'صحيح — لكن النسبة تختلف: 5% للمقيدة و10% لغير المقيدة.'},
+  {q:'تخضع كوبونات الأرباح للأوراق المالية المقيدة بالبورصة لضريبة قطعية 10% بينما تخضع غير المقيدة لضريبة 5%.',a:false,e:'خطأ — العكس: المقيدة 5% وغير المقيدة 10%.'},
+  {q:'تخضع الأرباح الناتجة من التصرف في المباني والسيارات والآلات وأجهزة الكمبيوتر للضريبة على أرباح الأشخاص الاعتبارية.',a:false,e:'خطأ — أرباح التصرف في السيارات والآلات والأثاث والحاسبات غير خاضعة، أما المباني فخاضعة.'},
+  {q:'تخضع أرباح هيئة قناة السويس والبنك المركزي للضريبة على أرباح الأشخاص الاعتبارية بنسبة 40.55%.',a:false,e:'خطأ — هيئة قناة السويس والبنك المركزي نسبتهما 40%، بينما 40.55% لشركات البترول والغاز الإنتاجية.'},
+  {q:'يُحتسب إهلاك ضريبي للأصول المعنوية المشتراة بمعدل إهلاك 25% من تكلفة شرائها.',a:false,e:'خطأ — الأصول المعنوية المشتراة تُهلك بمعدل 10% وليس 25%.'},
+  {q:'يُحتسب إهلاك الأثاث والسيارات على أساس 25% من أساس الإهلاك لكل سنة ضريبية.',a:false,e:'خطأ — الإهلاك يُحسب على أساس المتناقص (رصيد أول المدة + الإضافات − الاستبعادات) وليس من التكلفة الأصلية.'},
+];
+const MCQ4=[
+  {q:'أدرجت شركة كوبونات أرباح أوراق مالية مقيدة بالبورصة بمبلغ 30,000 ج وغير مقيدة بمبلغ 24,000 ج. قيمة الضريبة على الكوبونات:',opts:['2,400 ج','5,400 ج','3,900 ج','1,500 ج'],c:2,e:'مقيدة: 30,000 × 5% = 1,500. غير مقيدة: 24,000 × 10% = 2,400. الإجمالي = 3,900 ج.'},
+  {q:'أدرجت الشركة أرباحاً رأسمالية 50,000 ج من بيع مبنى، والتعديل الواجب على الربح المحاسبي يبلغ:',opts:['يُخصم 50,000','يُخصم 60,000','يُضاف 110,000','يُخصم 110,000'],c:3,e:'ربح البيع الضريبي = (700,000−10,000) − (1,000,000 − 1,000,000×5%×5) = 690,000 − 750,000 = −60,000 خسارة. التعديل = يُخصم 50,000 + 60,000 = 110,000 ج.'},
+  {q:'بلغ إهلاك المباني المحمّل لقائمة الدخل 50,000 ج بمعدل محاسبي 8%، وإهلاك أعمال فنية 15,000 ج. التعديل الواجب على الربح المحاسبي:',opts:['يُضاف 65,000','يُضاف 18,750','يُضاف 33,750','يُخصم 31,250'],c:2,e:'المدرج = 65,000. الواجب ضريبياً = 50,000 × (5÷8) = 31,250 + صفر (الفنية لا تُهلك). التعديل = يُضاف 65,000 − 31,250 = 33,750 ج.'},
+  {q:'إهلاك سيارات مدرج 460,000 ج، أساس الإهلاك المحسوب = 4,300,000 ج. التعديل الواجب على الربح المحاسبي:',opts:['يُخصم 602,500','يُخصم 615,000','يُضاف 25,000','يُضاف 460,000'],c:1,e:'الإهلاك الضريبي = 4,300,000 × 25% = 1,075,000. التعديل = يُخصم الفرق = 1,075,000 − 460,000 = 615,000 ج.'},
+  {q:'شركة مساهمة أصدرت سندات بقيمة 500,000 ج وقيمتها الاسمية 600,000 ج. الربح الناتج عن هذا الإصدار:',opts:['100,000 ج خاضع','100,000 ج غير خاضع','500,000 ج خاضع','لا ربح'],c:0,e:'الربح = القيمة الاسمية − القيمة المُصدَرة = 600,000 − 500,000 = 100,000 ج خاضع للضريبة.'},
+  {q:'شركة لديها رصيد إهلاك أول المدة 400,000 ج، اشترت حاسبات بـ 60,000 ج، باعت آلات بـ 20,000 ج. أساس الإهلاك ونسبته:',opts:['440,000 ج بنسبة 25%','440,000 ج بنسبة 50%','460,000 ج بنسبة 25%','440,000 ج لا إهلاك'],c:0,e:'أساس الإهلاك = 400,000 + 60,000 − 20,000 = 440,000 ج. النسبة 25% لأن الأصول هنا آلات وليست حاسبات فقط.'},
+];
+// ══════════════════════════════════════
+// MAQALI BANK
+// ══════════════════════════════════════
+const MAQALI_TERMS=[
+  {q:'الحدود السياسية الفاصلة بين جمهورية مصر العربية وبين الدول المجاورة لها سواء كانت حدوداً برية أو بحرية أو جوية.',opts:['الإقليم الجمركي','الخط الجمركي','الدائرة الجمركية','نقاط الرقابة الجمركية'],c:1,e:'الخط الجمركي — هو الحدود السياسية الفاصلة بين مصر والدول المجاورة.'},
+  {q:'خط انتظار ولا يُعد مساراً للإفراج النهائي للسلع التي لم يتم استيفاء المستندات اللازمة للإفراج عنها.',opts:['المسار الأخضر','المسار الأحمر','المسار الأصفر','نقطة الرقابة الجمركية'],c:2,e:'المسار الأصفر — خط انتظار لاستكمال المستندات الناقصة.'},
+  {q:'جزء من أقليم الدولة يدخل ضمن حدودها ويخضع لسلطاتها الإدارية وتمارس فيه الأعمال التجارية أو الصناعية ولا تخضع البضاعة الداخلة إليها للإجراءات الجمركية المعتادة.',opts:['المستودع الجمركي','الأسواق الحرة','المنطقة الحرة','الدائرة الجمركية'],c:2,e:'المنطقة الحرة — جزء من أقليم الدولة بدون إجراءات جمركية معتادة.'},
+  {q:'منصة إلكترونية متكاملة تقدم جميع الخدمات المتعلقة بالإفراج عن البضائع المستوردة أو المصدرة.',opts:['البيان الجمركي','النافذة الواحدة','التعريفة الجمركية الموحدة','المخلص الجمركي'],c:1,e:'النافذة الواحدة — منصة إلكترونية متكاملة لخدمات الإفراج.'},
+  {q:'مالك وسيلة النقل أو المنوط به تشغيلها وإدارتها.',opts:['المخلص الجمركي','الوكيل الملاحي','الناقل','المستورد'],c:2,e:'الناقل — مالك وسيلة النقل أو المنوط به تشغيلها.'},
+  {q:'كل شخص طبيعي أو اعتباري مرخص له من قِبل المصلحة بالقيام بإعداد البيان الجمركي وتوقيعه وتقديمه للجمارك.',opts:['الناقل','الوكيل الملاحي','المستورد','المخلص الجمركي'],c:3,e:'المخلص الجمركي — مرخص له بإعداد البيان الجمركي نيابةً عن صاحب البضاعة.'},
+  {q:'الإقرار الذي يقدمه صاحب البضاعة أو من يقوم مقامه، ورقياً أو إلكترونياً المتضمن تحديد العناصر المميزة لتلك البضاعة وكمياتها بالتفصيل.',opts:['التعريفة الجمركية الموحدة','قائمة الشحن (المانيفست)','البيان الجمركي','سند الشحن'],c:2,e:'البيان الجمركي — إقرار يُقدَّم للجمارك يتضمن تفاصيل البضاعة.'},
+  {q:'الجداول المتضمنة أسماء البضائع وفئات الرسوم الجمركية التي تخضع لها، وتصدر بقرار من رئيس الجمهورية.',opts:['البيان الجمركي','التعريفة الجمركية الموحدة','سند الشحن','قائمة الشحن'],c:1,e:'التعريفة الجمركية الموحدة — جداول أسماء البضائع وفئات الرسوم.'},
+  {q:'البضاعة أجنبية المنشأ التي ترد إلى ميناء مصري لشحنها مباشرة على وسيلة نقل أخرى إلى دولة أجنبية مع تعليق أداء الضريبة الجمركية مقابل تقديم ضمان.',opts:['البضائع الصب','البضاعة العابرة (الترانزيت)','البضائع الممنوعة','المستودع الجمركي'],c:1,e:'البضاعة العابرة (الترانزيت) — تمر عبر ميناء مصري دون دفع ضريبة مقابل ضمان.'},
+  {q:'البضائع التي تُشحن دون أن يحتويها أي غلاف.',opts:['البضائع الممنوعة','البضاعة العابرة','البضائع الصب','البضائع المرفوضة'],c:2,e:'البضائع الصب — تُشحن دون أي غلاف.'},
+];
+const MAQALI_RATIOS=[
+  {q:'تخضع السيارات الجديدة التي تعمل بالبنزين وسعة محركها حتى 1600 سي سي إلى ضريبة جمركية ___.',opts:['30%','40%','100%','135%'],c:1,e:'40% — ضريبة جمركية للسيارات البنزين حتى 1600 سي سي.'},
+  {q:'تخضع السيارات الجديدة التي تعمل بالبنزين وسعة محركها أكثر من 2000 سي سي إلى ضريبة جمركية ___ ورسم تنمية ___ وضريبة جدول ___.',opts:['40% - 3% - 1%','100% - 0 - 30%','135% - 8.5% - 30%','135% - 5% - 15%'],c:2,e:'135% ضريبة جمركية، 8.5% رسم تنمية، 30% ضريبة جدول للسيارات البنزين أكثر من 2000 سي سي.'},
+  {q:'تُمنح السيارات المستعملة المستوردة خصماً قدره ___ عن سنة الموديل، ثم ___ عن كل سنة تالية بحد أقصى ___.',opts:['5% - 10% - 50%','10% - 5% - 50%','10% - 10% - 50%','5% - 5% - 40%'],c:1,e:'10% عن سنة الموديل + 5% عن كل سنة تالية بحد أقصى 50%.'},
+  {q:'تخضع الآلات المستوردة من الخارج إلى ضريبة جمركية بنسبة ___.',opts:['10%','14%','5%','22.5%'],c:2,e:'5% — ضريبة جمركية على الآلات المستوردة.'},
+  {q:'في ظل نظام السماح المؤقت، في حال عدم استخدام المواد الخام في الأغراض المخصصة لها، تُفرض ضريبة إضافية بمعدل ___ عن كل شهر تأخير (بموافقة الجمارك).',opts:['3%','1.5%','5%','10%'],c:1,e:'1.5% شهرياً (بموافقة الجمارك)، 3% شهرياً (بدون موافقة).'},
+  {q:'السعر العام لضريبة القيمة المضافة هو ___.',opts:['10%','12%','14%','16%'],c:2,e:'14% — السعر العام لضريبة القيمة المضافة.'},
+  {q:'يخضع التبغ الخام لضريبة جدول تعادل ___ من القيمة، بينما تخضع أجهزة التكييف لضريبة جدول تعادل ___.',opts:['100% - 8%','50% - 8%','100% - 14%','40 ج/كجم - 14%'],c:0,e:'التبغ الخام 100% من القيمة (أو 40 ج/كجم أيهما أكبر)، التكييف 8%.'},
+  {q:'تخضع أقساط التأمين على الحياة لضريبة دمغة تعادل ___ من قيمة القسط وتُقسَّم مناصفةً بين المؤمِّن والمؤمَّن عليه.',opts:['11%','8 في الألف','1%','0.5 في الألف'],c:2,e:'1% — ضريبة دمغة نسبية على أقساط التأمين على الحياة.'},
+  {q:'تخضع كوبونات الأوراق المالية المُنجَزة داخل مصر لضريبة أرباح الأشخاص الاعتبارية بنسبة ___ إذا كانت الأوراق المالية مقيدة بالبورصة، وبنسبة ___ إذا كانت غير مقيدة.',opts:['10% - 5%','5% - 10%','5% - 5%','10% - 10%'],c:1,e:'مقيدة: 5%، غير مقيدة: 10%.'},
+  {q:'يُحتسب إهلاك ضريبي للمباني بنسبة ___ من تكلفتها، بينما يُحتسب إهلاك للأصول المعنوية المشتراة بنسبة ___ ، وللأثاث بنسبة ___ من أساس الإهلاك.',opts:['5% - 10% - 25%','10% - 5% - 25%','5% - 25% - 10%','8% - 10% - 25%'],c:0,e:'مباني 5%، أصول معنوية 10%، أثاث 25% من أساس الإهلاك.'},
+];
+
+// ══════════════════════════════════════
+// STATE & NAVIGATION
+// ══════════════════════════════════════
+let curMode='chapters', curCh=1, curTab='learn';
+let chExamState={}, finalState=null, maqaliState=null;
+
+const shuffle=arr=>[...arr].sort(()=>Math.random()-.5);
+
+function switchMode(mode,el){
+  curMode=mode;
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['chapters','final','maqali'].forEach(m=>{
+    const el2=document.getElementById('mode-'+m);
+    if(el2) el2.style.display=m===mode?'block':'none';
+  });
+}
+function switchChapter(n,el){
+  curCh=n;
+  document.querySelectorAll('.ch-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const names=['الفصل الأول — الضريبة الجمركية','الفصل الثاني — ضريبة القيمة المضافة','الفصل الثالث — ضريبة الدمغة','الفصل الرابع — أرباح الأشخاص الاعتبارية'];
+  document.getElementById('sub-title').textContent=names[n-1];
+  document.getElementById('top-badge').textContent='📚 Ch.'+n;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+curTab).classList.add('active');
+  showChSection();
+  if(curTab==='exam'&&!chExamState['ch'+n]) buildChExam(n);
+}
+function switchTab(tab,el){
+  curTab=tab;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  showChSection();
+  if(tab==='exam'&&!chExamState['ch'+curCh]) buildChExam(curCh);
+}
+function showChSection(){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('ch'+curCh+'-'+curTab).classList.add('active');
+}
+function tog(id){
+  document.getElementById('bd_'+id).classList.toggle('open');
+  document.getElementById('ar_'+id).classList.toggle('open');
+}
+
+// ══════════════════════════════════════
+// EXAM RENDER
+// ══════════════════════════════════════
+const CH_CFG={1:{tf:7,mc:9,tfB:TF1,mcB:MCQ1},2:{tf:7,mc:6,tfB:TF2,mcB:MCQ2},3:{tf:6,mc:5,tfB:TF3,mcB:MCQ3},4:{tf:5,mc:5,tfB:TF4,mcB:MCQ4}};
+
+function buildChExam(ch){
+  const cfg=CH_CFG[ch], key='ch'+ch;
+  const tfPool=shuffle(cfg.tfB).slice(0,cfg.tf);
+  const mcPool=shuffle(cfg.mcB).slice(0,cfg.mc);
+  chExamState[key]={tfPool,mcPool,tfAns:new Array(cfg.tf).fill(null),tfDone:new Array(cfg.tf).fill(false),mcAns:new Array(cfg.mc).fill(null),mcDone:new Array(cfg.mc).fill(false),tfScore:0,mcScore:0,total:cfg.tf+cfg.mc,finished:false};
+  const titles=['الفصل الأول — الضريبة الجمركية','الفصل الثاني — ضريبة القيمة المضافة','الفصل الثالث — ضريبة الدمغة','الفصل الرابع — أرباح الأشخاص الاعتبارية'];
+  renderExam(key,'ch'+ch+'-exam-content',titles[ch-1],false);
+}
+
+function buildFinal(){
+  const tf1=shuffle(TF1).slice(0,7).map(q=>({...q,ch:'ف١'}));
+  const tf2=shuffle(TF2).slice(0,7).map(q=>({...q,ch:'ف٢'}));
+  const tf3=shuffle(TF3).slice(0,6).map(q=>({...q,ch:'ف٣'}));
+  const tf4=shuffle(TF4).slice(0,5).map(q=>({...q,ch:'ف٤'}));
+  const mc1=shuffle(MCQ1).slice(0,9).map(q=>({...q,ch:'ف١'}));
+  const mc2=shuffle(MCQ2).slice(0,6).map(q=>({...q,ch:'ف٢'}));
+  const mc3=shuffle(MCQ3).slice(0,5).map(q=>({...q,ch:'ف٣'}));
+  const mc4=shuffle(MCQ4).slice(0,5).map(q=>({...q,ch:'ف٤'}));
+  const tfPool=shuffle([...tf1,...tf2,...tf3,...tf4]);
+  const mcPool=shuffle([...mc1,...mc2,...mc3,...mc4]);
+  const total=tfPool.length+mcPool.length;
+  finalState={tfPool,mcPool,tfAns:new Array(tfPool.length).fill(null),tfDone:new Array(tfPool.length).fill(false),mcAns:new Array(mcPool.length).fill(null),mcDone:new Array(mcPool.length).fill(false),tfScore:0,mcScore:0,total,finished:false};
+  document.getElementById('final-content').innerHTML='<div id="final-exam-wrap"></div>';
+  renderExam('fin','final-exam-wrap','الاختبار النهائي الشامل — الفصول الأربعة',true);
+}
+
+function buildMaqali(){
+  const termsPool=shuffle(MAQALI_TERMS);
+  const ratiosPool=shuffle(MAQALI_RATIOS);
+  const mcPool=[...termsPool,...ratiosPool];
+  const total=mcPool.length;
+  maqaliState={mcPool,mcAns:new Array(total).fill(null),mcDone:new Array(total).fill(false),mcScore:0,total,finished:false};
+  document.getElementById('maqali-content').innerHTML='<div id="maqali-exam-wrap"></div>';
+  renderMaqali();
+}
+
+function renderMaqali(){
+  const st=maqaliState;
+  const labels=['أ','ب','ج','د'];
+  let h=`<div class="quiz-hdr">
+    <div class="quiz-hdr-title">📝 اختبار المقالي</div>
+    <div class="quiz-hdr-sub">مصطلحات جمركية + نسب مئوية — اختر الإجابة الصحيحة</div>
+    <div class="quiz-stats">
+      <div class="stat-b"><span>المصطلحات:</span><strong>10</strong></div>
+      <div class="stat-b"><span>النسب المئوية:</span><strong>10</strong></div>
+      <div class="stat-b"><span>الإجمالي:</span><strong>20</strong></div>
+    </div></div>
+  <div class="prog-wrap">
+    <div class="prog-label"><span>التقدم</span><span id="prog-maq">0 / ${st.total}</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="pfill-maq" style="width:0%"></div></div>
+  </div>
+  <div class="sec-div"><div class="sdl"></div><div class="sdlabel">📚 المصطلحات الجمركية</div><div class="sdl"></div></div>`;
+  MAQALI_TERMS.forEach((_,i)=>{
+    const q=st.mcPool[i];
+    h+=renderMCQCard('maq',i,i+1,q,labels,'اختبار المقالي — مصطلحات');
+  });
+  h+=`<div class="sec-div"><div class="sdl"></div><div class="sdlabel">📊 النسب المئوية</div><div class="sdl"></div></div>`;
+  for(let i=10;i<20;i++){
+    const q=st.mcPool[i];
+    h+=renderMCQCard('maq',i,i+1,q,labels,'اختبار المقالي — نسب');
+  }
+  h+=`<div id="maq_score" style="display:none"></div>`;
+  document.getElementById('maqali-exam-wrap').innerHTML=h;
+}
+function renderMCQCard(key,i,num,q,labels,chLabel){
+  return `<div class="q-card" id="${key}_mcqc${i}">
+    <div class="q-meta"><div class="q-num-b">سؤال ${num}</div><div class="q-badges"><div class="q-type-b type-mc">اختيار متعدد</div></div></div>
+    <div class="q-text">${q.q}</div>
+    <div class="mc-opts">${q.opts.map((o,j)=>`<button class="mc-btn" id="${key}_mcqb${i}_${j}" onclick="doMCQMaq(${i},${j})"><div class="opt-lbl">${labels[j]}</div><div>${o}</div></button>`).join('')}</div>
+    <div class="explain" id="${key}_mcqex${i}"></div></div>`;
+}
+function doMCQMaq(i,j){
+  const st=maqaliState;
+  if(st.mcDone[i])return;
+  st.mcDone[i]=true; st.mcAns[i]=j;
+  const q=st.mcPool[i]; const ok=j===q.c;
+  if(ok) st.mcScore++;
+  q.opts.forEach((_,k)=>{
+    const b=document.getElementById(`maq_mcqb${i}_${k}`);
+    b.disabled=true;
+    if(k===q.c) b.classList.add(j===k?'correct':'reveal');
+    else if(k===j) b.classList.add('wrong');
+  });
+  document.getElementById(`maq_mcqc${i}`).classList.add(ok?'ans-ok':'ans-bad');
+  const ex=document.getElementById(`maq_mcqex${i}`);
+  ex.textContent=(ok?'✔ إجابة صحيحة! ':'✖ إجابة خاطئة. ')+q.e;
+  ex.className='explain show '+(ok?'ok':'bad');
+  const done=st.mcDone.filter(Boolean).length;
+  document.getElementById('prog-maq').textContent=`${done} / ${st.total}`;
+  document.getElementById('pfill-maq').style.width=(done/st.total*100)+'%';
+  if(done===st.total&&!st.finished){st.finished=true;showScoreMaq();}
+}
+function showScoreMaq(){
+  const st=maqaliState;
+  const pct=Math.round(st.mcScore/st.total*100);
+  const g=pct>=85?{msg:'ممتاز! 🎉',c:'#00c896'}:pct>=70?{msg:'جيد جداً 💪',c:'var(--accent)'}:pct>=60?{msg:'جيد 👍',c:'var(--warn)'}:{msg:'راجع الدرس 📚',c:'var(--wrong)'};
+  const el=document.getElementById('maq_score');
+  el.style.display='block';
+  el.innerHTML=`<div class="score-wrap">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px">نتيجة اختبار المقالي</div>
+    <div class="score-circle" style="--pct:${pct*3.6}deg">
+      <div class="score-num" style="color:${g.c}">${st.mcScore}</div>
+      <div class="score-den">من ${st.total}</div>
+    </div>
+    <div class="score-title" style="color:${g.c}">${g.msg}</div>
+    <div class="score-msg">${pct}% من الدرجة الكلية</div>
+    <button class="restart-btn" onclick="buildMaqali()">🔄 اختبار جديد</button>
+  </div>`;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function renderExam(key,containerId,title,isGlobal){
+  const st=isGlobal?finalState:chExamState[key];
+  const {tfPool,mcPool,total}=st;
+  const labels=['أ','ب','ج','د'];
+  let h=`<div class="quiz-hdr">
+    <div class="quiz-hdr-title">📝 ${title}</div>
+    <div class="quiz-hdr-sub">أسئلة عشوائية من بنك أسئلة الكتاب</div>
+    <div class="quiz-stats">
+      <div class="stat-b"><span>صح/خطأ:</span><strong>${tfPool.length}</strong></div>
+      <div class="stat-b"><span>اختيار متعدد:</span><strong>${mcPool.length}</strong></div>
+      <div class="stat-b"><span>الإجمالي:</span><strong>${total}</strong></div>
+    </div></div>
+  <div class="prog-wrap">
+    <div class="prog-label"><span>التقدم</span><span id="prog-${key}">0 / ${total}</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="pfill-${key}" style="width:0%"></div></div>
+  </div>
+  <div class="sec-div"><div class="sdl"></div><div class="sdlabel">✅ أسئلة صح وخطأ</div><div class="sdl"></div></div>`;
+  tfPool.forEach((q,i)=>{
+    const chB=q.ch?`<div class="q-ch-b">${q.ch}</div>`:'';
+    h+=`<div class="q-card" id="${key}_tfc${i}">
+      <div class="q-meta"><div class="q-num-b">سؤال ${i+1}</div><div class="q-badges">${chB}<div class="q-type-b type-tf">صح / خطأ</div></div></div>
+      <div class="q-text">${q.q}</div>
+      <div class="tf-opts">
+        <button class="tf-btn" id="${key}_tft${i}" onclick="doTF('${key}',${i},true,${isGlobal})">✔ صح</button>
+        <button class="tf-btn" id="${key}_tff${i}" onclick="doTF('${key}',${i},false,${isGlobal})">✖ خطأ</button>
+      </div>
+      <div class="explain" id="${key}_tfex${i}"></div></div>`;
+  });
+  h+=`<div class="sec-div"><div class="sdl"></div><div class="sdlabel">🎯 اختيار من متعدد</div><div class="sdl"></div></div>`;
+  mcPool.forEach((q,i)=>{
+    const chB=q.ch?`<div class="q-ch-b">${q.ch}</div>`:'';
+    h+=`<div class="q-card" id="${key}_mcqc${i}">
+      <div class="q-meta"><div class="q-num-b">سؤال ${tfPool.length+i+1}</div><div class="q-badges">${chB}<div class="q-type-b type-mc">اختيار متعدد</div></div></div>
+      <div class="q-text">${q.q}</div>
+      <div class="mc-opts">${q.opts.map((o,j)=>`<button class="mc-btn" id="${key}_mcqb${i}_${j}" onclick="doMCQ('${key}',${i},${j},${isGlobal})"><div class="opt-lbl">${labels[j]}</div><div>${o}</div></button>`).join('')}</div>
+      <div class="explain" id="${key}_mcqex${i}"></div></div>`;
+  });
+  h+=`<div id="${key}_score" style="display:none"></div>`;
+  document.getElementById(containerId).innerHTML=h;
+}
+
+function doTF(key,i,ans,isGlobal){
+  const st=isGlobal?finalState:chExamState[key];
+  if(st.tfDone[i])return;
+  st.tfDone[i]=true; st.tfAns[i]=ans;
+  const q=st.tfPool[i];
+  const tB=document.getElementById(`${key}_tft${i}`),fB=document.getElementById(`${key}_tff${i}`);
+  tB.disabled=fB.disabled=true;
+  const ok=ans===q.a;
+  if(ok){st.tfScore++;(ans?tB:fB).classList.add('correct');}
+  else{(ans?tB:fB).classList.add('wrong');(q.a?tB:fB).classList.add('reveal');}
+  document.getElementById(`${key}_tfc${i}`).classList.add(ok?'ans-ok':'ans-bad');
+  const ex=document.getElementById(`${key}_tfex${i}`);
+  ex.textContent=(ok?'✔ إجابة صحيحة! ':'✖ إجابة خاطئة. ')+q.e;
+  ex.className='explain show '+(ok?'ok':'bad');
+  updateProg(key,isGlobal);
+}
+function doMCQ(key,i,j,isGlobal){
+  const st=isGlobal?finalState:chExamState[key];
+  if(st.mcDone[i])return;
+  st.mcDone[i]=true; st.mcAns[i]=j;
+  const q=st.mcPool[i]; const ok=j===q.c;
+  if(ok) st.mcScore++;
+  q.opts.forEach((_,k)=>{
+    const b=document.getElementById(`${key}_mcqb${i}_${k}`);
+    b.disabled=true;
+    if(k===q.c) b.classList.add(j===k?'correct':'reveal');
+    else if(k===j) b.classList.add('wrong');
+  });
+  document.getElementById(`${key}_mcqc${i}`).classList.add(ok?'ans-ok':'ans-bad');
+  const ex=document.getElementById(`${key}_mcqex${i}`);
+  ex.textContent=(ok?'✔ إجابة صحيحة! ':'✖ إجابة خاطئة. ')+q.e;
+  ex.className='explain show '+(ok?'ok':'bad');
+  updateProg(key,isGlobal);
+}
+function updateProg(key,isGlobal){
+  const st=isGlobal?finalState:chExamState[key];
+  const done=st.tfDone.filter(Boolean).length+st.mcDone.filter(Boolean).length;
+  document.getElementById(`prog-${key}`).textContent=`${done} / ${st.total}`;
+  document.getElementById(`pfill-${key}`).style.width=(done/st.total*100)+'%';
+  if(done===st.total&&!st.finished){st.finished=true;showScore(key,isGlobal);}
+}
+function showScore(key,isGlobal){
+  const st=isGlobal?finalState:chExamState[key];
+  const total=st.tfScore+st.mcScore;
+  const pct=Math.round(total/st.total*100);
+  const g=pct>=85?{msg:'ممتاز! 🎉',c:'#00c896'}:pct>=70?{msg:'جيد جداً 💪',c:'var(--accent)'}:pct>=60?{msg:'جيد 👍',c:'var(--warn)'}:{msg:'راجع الدرس 📚',c:'var(--wrong)'};
+  const ch=key==='fin'?0:parseInt(key.replace('ch',''));
+  const restartFn=isGlobal?'buildFinal()':'buildChExam('+ch+')';
+  const el=document.getElementById(`${key}_score`);
+  el.style.display='block';
+  el.innerHTML=`<div class="score-wrap">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px">نتيجة الاختبار</div>
+    <div class="score-circle" style="--pct:${pct*3.6}deg">
+      <div class="score-num" style="color:${g.c}">${total}</div>
+      <div class="score-den">من ${st.total}</div>
+    </div>
+    <div class="score-title" style="color:${g.c}">${g.msg}</div>
+    <div class="score-msg">${pct}% من الدرجة الكلية</div>
+    <div class="score-bd">
+      <div class="bd-item"><div class="bd-n" style="color:var(--accent3)">${st.tfScore}/${st.tfPool.length}</div><div class="bd-l">صح وخطأ</div></div>
+      <div class="bd-item"><div class="bd-n" style="color:var(--accent)">${st.mcScore}/${st.mcPool.length}</div><div class="bd-l">اختيار متعدد</div></div>
+      <div class="bd-item"><div class="bd-n" style="color:${g.c}">${pct}%</div><div class="bd-l">المجموع</div></div>
+    </div>
+    <button class="restart-btn" onclick="${restartFn}">🔄 اختبار جديد</button>
+  </div>`;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+[1,2,3,4].forEach(n=>buildChExam(n));
+</script>
+</body>
+</html>
